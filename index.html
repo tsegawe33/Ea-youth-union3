@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>EA Youth Union - Ultimate Edition</title>
+    <title>EA Youth Union - Ultimate Offline Pro</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Ethiopic:wght@400;700&display=swap" rel="stylesheet">
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
@@ -13,33 +13,34 @@
     
     <style>
         :root { --p: #0a4d1a; --s: #d4af37; --bg: #f4f7f6; --fSize: 18px; }
-        body { margin: 0; background: var(--bg); font-family: 'Noto Serif Ethiopic', serif; -webkit-user-select: none; }
+        body { margin: 0; background: var(--bg); font-family: 'Noto Serif Ethiopic', serif; overflow-x: hidden; }
         
-        #loader { position: fixed; inset: 0; background: var(--p); z-index: 10000; display: flex; flex-direction: column; align-items: center; justify-content: center; color: white; transition: 0.5s; }
-        .logo-ani { width: 80px; height: 80px; background: white; border-radius: 50%; border: 3px solid var(--s); animation: pulse 1.5s infinite; }
+        #loader { position: fixed; inset: 0; background: var(--p); z-index: 10000; display: flex; flex-direction: column; align-items: center; justify-content: center; color: white; transition: 0.6s; }
+        .logo-ani { width: 90px; height: 90px; border-radius: 20px; background: white; border: 3px solid var(--s); animation: pulse 1.5s infinite; }
         @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
 
-        header { background: var(--p); color: white; padding: 18px; text-align: center; border-bottom: 3px solid var(--s); font-weight: bold; position: sticky; top: 0; z-index: 1000; }
-        .container { max-width: 600px; margin: auto; padding: 15px; padding-bottom: 110px; }
+        header { background: var(--p); color: white; padding: 18px; text-align: center; border-bottom: 3px solid var(--s); position: sticky; top: 0; z-index: 1000; font-weight: bold; }
+        .container { max-width: 600px; margin: auto; padding: 15px; padding-bottom: 120px; }
         .page { display: none; }
-        .page.active { display: block; animation: fadeIn 0.4s; }
+        .page.active { display: block; animation: fadeIn 0.3s; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        .card { background: white; border-radius: 15px; padding: 20px; margin-bottom: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
-        .nav-bar { position: fixed; bottom: 10px; left: 50%; transform: translateX(-50%); width: 94%; background: var(--p); border-radius: 35px; display: flex; justify-content: space-around; padding: 12px; border: 1px solid var(--s); z-index: 2000; }
-        .nav-item { color: rgba(255,255,255,0.3); text-align: center; flex:1; cursor: pointer; }
+        .card { background: white; border-radius: 18px; padding: 20px; margin-bottom: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
+        .nav-bar { position: fixed; bottom: 10px; left: 50%; transform: translateX(-50%); width: 94%; background: var(--p); border-radius: 35px; display: flex; justify-content: space-around; padding: 10px; border: 1px solid var(--s); z-index: 2000; }
+        .nav-item { color: rgba(255,255,255,0.4); text-align: center; flex:1; cursor: pointer; }
         .nav-item.active { color: var(--s); }
         .nav-item span { display: block; font-size: 10px; margin-top: 2px; }
 
         .btn-action { background: var(--s); color: black; border: none; padding: 14px; width: 100%; border-radius: 12px; font-weight: bold; cursor: pointer; margin-top: 10px; display: flex; align-items: center; justify-content: center; gap: 8px; }
         .admin-sec { display: none; background: #fff; padding: 15px; border-radius: 12px; margin-top: 10px; border: 1px solid #ddd; }
-        input, textarea { width: 100%; padding: 12px; margin: 8px 0; border-radius: 10px; border: 1px solid #ddd; box-sizing: border-box; }
+        input, textarea, select { width: 100%; padding: 12px; margin: 8px 0; border-radius: 10px; border: 1px solid #ddd; box-sizing: border-box; }
         #map { height: 350px; width: 100%; border-radius: 15px; background: #eee; }
+        .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 12px; text-align: center; }
     </style>
 </head>
 <body>
 
-<div id="loader"><div class="logo-ani"></div><h3>EA YOUTH UNION</h3></div>
+<div id="loader"><div class="logo-ani"></div><h3 style="margin-top:15px;">EA YOUTH UNION</h3></div>
 <header id="appHeader">EA YOUTH UNION</header>
 
 <div class="container">
@@ -53,52 +54,53 @@
 
     <div id="songs" class="page">
         <button class="btn-action" style="background:#111; color:white;" onclick="downloadAllAudio()">
-            <i class="fas fa-download"></i> ሁሉንም መዝሙሮች ለኦፍላይን አውርድ
+            <i class="fas fa-cloud-download-alt"></i> ሁሉንም መዝሙሮች ለኦፍላይን አውርድ
         </button>
-        <input type="text" id="sSearch" placeholder="መዝሙር ፈልግ..." onkeyup="searchSong(this.value)" style="margin-top:15px;">
+        <input type="text" placeholder="መዝሙር ፈልግ..." onkeyup="searchSong(this.value)" style="margin-top:15px;">
         <div id="songList"></div>
     </div>
 
     <div id="calendar" class="page">
         <div class="card" style="background:var(--p); color:white; text-align:center;"><h2 id="ethDate"></h2></div>
-        <div class="card"><h4>ማስታወሻ</h4><input type="time" id="alTime"><button class="btn-action">መዝግብ</button></div>
+        <div class="card"><h4>የደወል ማስታወሻ</h4><input type="time" id="alTime"><button class="btn-action">ማስታወሻ መዝግብ</button></div>
     </div>
 
     <div id="map-page" class="page">
-        <div class="card"><div id="map"></div><button class="btn-action" onclick="findSDA()">አሁን ፈልግ</button></div>
+        <div class="card"><div id="map"></div><button class="btn-action" onclick="findSDA()">አሁኑኑ ፈልግ</button></div>
     </div>
 
     <div id="thanks" class="page">
         <div id="galleryFeed"></div>
         <div class="card"><p id="thanksText" style="text-align: center;"></p></div>
         <div style="text-align: center; margin-top: 50px;">
-            <span onclick="adminClick()" style="color: black; opacity: 0.05; cursor: pointer; font-size: 15px;">⚫</span>
+            <span onclick="adminClick()" style="color: black; opacity: 0.05; cursor: pointer;">⚫</span>
         </div>
     </div>
 
     <div id="admin" class="page">
-        <div class="card" style="background:#222; color:white;"><h3>Admin Panel <span id="uStat" style="float:right; color:var(--s);">0</span></h3></div>
+        <div class="card" style="background:#222; color:white;">
+            <h3>Admin Panel</h3>
+            <div class="stat-grid">
+                <div>SDA: <b id="s_sda">0</b></div><div>Non-SDA: <b id="s_non">0</b></div>
+                <div>Addis: <b id="s_aa">0</b></div><div>Other City: <b id="s_oc">0</b></div>
+            </div>
+        </div>
         <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
             <button class="btn-action" onclick="showAdm('a-ui')">UI/Logo</button>
             <button class="btn-action" onclick="showAdm('a-news')">ዜና/ጥቅስ</button>
             <button class="btn-action" onclick="showAdm('a-song')">መዝሙር Edit</button>
             <button class="btn-action" onclick="showAdm('a-stat')">Stat Edit</button>
+            <button class="btn-action" onclick="showAdm('a-thank')">ምስጋና Edit</button>
         </div>
 
-        <div id="a-ui" class="admin-sec"><input id="iL" placeholder="Logo URL"><input type="color" id="iC"><button class="btn-action" onclick="saveUI()">Save UI</button></div>
-        <div id="a-news" class="admin-sec"><input id="nT" placeholder="News Title"><textarea id="nD" placeholder="Details"></textarea><input id="vT" placeholder="Daily Verse"><button class="btn-action" onclick="saveNews()">Post</button></div>
-        
-        <div id="a-song" class="admin-sec">
-            <h4>መዝሙር መጨመሪያ/ማስተካከያ</h4>
-            <input id="sN" type="number" placeholder="ቁጥር (No)">
-            <input id="sT" placeholder="ርዕስ (Title)">
-            <textarea id="sL" placeholder="ግጥም (Lyric)" rows="5"></textarea>
-            <input id="sA" placeholder="Audio Link">
-            <button class="btn-action" onclick="saveSong()">መዝሙር ሴቭ አድርግ</button>
-            <p style="font-size:10px; color:red;">* ቁጥሩ ካለ በራሱ ያርመዋል (Update)፤ ከሌለ አዲስ ይጨምራል።</p>
+        <div id="a-ui" class="admin-sec"><input id="iL" placeholder="Logo URL"><input type="color" id="iC"><button class="btn-action" onclick="saveUI()">Save</button></div>
+        <div id="a-news" class="admin-sec"><input id="nT" placeholder="News Title"><textarea id="nD" placeholder="Details"></textarea><button class="btn-action" onclick="saveNews()">Post</button></div>
+        <div id="a-song" class="admin-sec"><input id="sN" type="number" placeholder="No"><input id="sT" placeholder="Title"><textarea id="sL" placeholder="Lyric"></textarea><input id="sA" placeholder="Audio Link"><button class="btn-action" onclick="saveSong()">Save/Update</button></div>
+        <div id="a-stat" class="admin-sec">
+            <select id="stCat"><option value="sda">SDA Count</option><option value="non">Non-SDA Count</option><option value="aa">Addis Ababa Count</option><option value="oc">Other City Count</option></select>
+            <input id="stVal" type="number" placeholder="አዲስ ቁጥር"><button class="btn-action" onclick="saveStat()">Update Stat</button>
         </div>
-
-        <div id="a-stat" class="admin-sec"><input id="sVal" type="number" placeholder="የተጠቃሚ ቁጥር"><button class="btn-action" onclick="saveStat()">Update</button></div>
+        <div id="a-thank" class="admin-sec"><input id="tI" placeholder="Image URL"><textarea id="tT" placeholder="Message"></textarea><button class="btn-action" onclick="saveThanks()">Update Thanks</button></div>
     </div>
 
     <div id="viewer" class="page">
@@ -114,7 +116,7 @@
 <nav class="nav-bar">
     <div class="nav-item active" onclick="showPage('home', this)"><i class="fas fa-home"></i><span>Home</span></div>
     <div class="nav-item" onclick="showPage('songs', this)"><i class="fas fa-music"></i><span>Songs</span></div>
-    <div class="nav-item" onclick="showPage('calendar', this)"><i class="fas fa-calendar-day"></i><span>Date</span></div>
+    <div class="nav-item" onclick="showPage('calendar', this)"><i class="fas fa-calendar-alt"></i><span>Date</span></div>
     <div class="nav-item" onclick="showPage('map-page', this)"><i class="fas fa-map-marker-alt"></i><span>Map</span></div>
     <div class="nav-item" onclick="showPage('thanks', this)"><i class="fas fa-heart"></i><span>Thanks</span></div>
 </nav>
@@ -128,16 +130,77 @@
     window.onload = () => {
         setTimeout(() => document.getElementById('loader').style.display='none', 1200);
         ethDate.innerText = new Date().toLocaleDateString('am-ET', {weekday:'long', month:'long', day:'numeric'});
-        loadData(); initMap(); updateVisits();
+        loadData(); initMap();
     };
 
-    function updateVisits() { db.ref('stats/count').transaction(c => (c || 0) + 1); }
+    function loadData() {
+        // Offline First Load
+        const cachedSongs = JSON.parse(localStorage.getItem('songs') || '[]');
+        if(cachedSongs.length > 0) renderSongs(cachedSongs);
+
+        db.ref('news').on('value', s => { let h = ""; s.forEach(c => h = `<div class="card"><h3>${c.val().title}</h3><p>${c.val().desc}</p></div>` + h); newsFeed.innerHTML = h; });
+        db.ref('songs').orderByChild('no').on('value', s => {
+            let songs = []; s.forEach(c => songs.push(c.val()));
+            localStorage.setItem('songs', JSON.stringify(songs));
+            renderSongs(songs);
+        });
+        db.ref('dailyVerse').on('value', s => { if(s.val()) dailyVerse.innerText = s.val().text; });
+        db.ref('thanksData').on('value', s => { if(s.val()){ galleryFeed.innerHTML = `<img src="${s.val().img}" style="width:100%; border-radius:15px;">`; thanksText.innerText = s.val().txt; } });
+        db.ref('appSettings').on('value', s => { if(s.val()){ if(s.val().color) document.documentElement.style.setProperty('--p', s.val().color); } });
+        
+        // Sync Stats
+        db.ref('stats').on('value', s => { if(s.val()){
+            s_sda.innerText = s.val().sda || 0; s_non.innerText = s.val().non || 0;
+            s_aa.innerText = s.val().aa || 0; s_oc.innerText = s.val().oc || 0;
+        }});
+    }
+
+    function renderSongs(songs) {
+        let h = ""; songs.forEach(s => {
+            const saved = localStorage.getItem('audio_'+s.no) ? ' ✅' : '';
+            h += `<div class="card" onclick="openSong('${s.title}',\`${s.lyric}\`,'${s.audio}',${s.no})">${s.no}. ${s.title}${saved}</div>`;
+        });
+        songList.innerHTML = h;
+    }
+
+    async function downloadAllAudio() {
+        alert("ዳውንሎድ ተጀምሯል። እባክህ ትንሽ ጠብቅ...");
+        const songs = JSON.parse(localStorage.getItem('songs') || '[]');
+        for(let d of songs) {
+            if(d.audio && !localStorage.getItem('audio_'+d.no)) {
+                try {
+                    const res = await fetch(d.audio);
+                    const blob = await res.blob();
+                    const reader = new FileReader();
+                    reader.onloadend = () => localStorage.setItem('audio_'+d.no, reader.result);
+                    reader.readAsDataURL(blob);
+                } catch(e) {}
+            }
+        }
+        alert("የሚወርዱት ተጠናቀዋል!");
+    }
+
+    function openSong(t, l, a, n) {
+        vTi.innerText = t; vLy.innerText = l;
+        const saved = localStorage.getItem('audio_'+n);
+        if(saved) { mainAudio.src = saved; mainAudio.style.display='block'; }
+        else if(a) { mainAudio.src = a; mainAudio.style.display='block'; }
+        else { mainAudio.style.display='none'; }
+        showPage('viewer');
+    }
+
+    // Admin Actions
+    function saveUI() { db.ref('appSettings').update({logo:iL.value, color:iC.value}); alert("Saved!"); }
+    function saveNews() { db.ref('news').push({title:nT.value, desc:nD.value}); db.ref('dailyVerse').set({text:vT.value}); alert("Posted!"); }
+    function saveSong() { db.ref('songs/'+parseInt(sN.value)).set({no:parseInt(sN.value), title:sT.value, lyric:sL.value, audio:sA.value}); alert("Song Updated!"); }
+    function saveStat() { db.ref('stats').update({ [stCat.value]: parseInt(stVal.value) }); alert("Stat Updated!"); }
+    function saveThanks() { db.ref('thanksData').set({img:tI.value, txt:tT.value}); alert("Thanks Updated!"); }
 
     function initMap() {
         try {
             map = L.map('map').setView([9.0192, 38.7525], 6);
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
-        } catch(e) { console.log("Map offline"); }
+        } catch(e) { console.log("Map offline mode active."); }
     }
 
     function findSDA() {
@@ -152,63 +215,6 @@
         }
     }
 
-    function loadData() {
-        db.ref('news').on('value', s => { let h = ""; s.forEach(c => h = `<div class="card"><h3>${c.val().title}</h3><p>${c.val().desc}</p></div>` + h); newsFeed.innerHTML = h; });
-        db.ref('songs').orderByChild('no').on('value', s => {
-            let h = ""; s.forEach(c => {
-                const saved = localStorage.getItem('audio_'+c.val().no) ? ' ✅' : '';
-                h += `<div class="card" onclick="openSong('${c.val().title}',\`${c.val().lyric}\`,'${c.val().audio}',${c.val().no})">${c.val().no}. ${c.val().title}${saved}</div>`;
-            });
-            songList.innerHTML = h;
-        });
-        db.ref('dailyVerse').on('value', s => { if(s.val()) dailyVerse.innerText = s.val().text; });
-        db.ref('stats/count').on('value', s => uStat.innerText = s.val() || 0);
-        db.ref('thanksData').on('value', s => { if(s.val()){ galleryFeed.innerHTML = `<img src="${s.val().img}" style="width:100%; border-radius:15px;">`; thanksText.innerText = s.val().txt; } });
-    }
-
-    async function downloadAllAudio() {
-        alert("ዳውንሎድ ተጀምሯል። እባክህ ትንሽ ጠብቅ...");
-        db.ref('songs').once('value', async s => {
-            s.forEach(async c => {
-                const d = c.val();
-                if(d.audio && !localStorage.getItem('audio_'+d.no)) {
-                    try {
-                        const res = await fetch(d.audio);
-                        const blob = await res.blob();
-                        const reader = new FileReader();
-                        reader.onloadend = () => localStorage.setItem('audio_'+d.no, reader.result);
-                        reader.readAsDataURL(blob);
-                    } catch(e) {}
-                }
-            });
-        });
-        setTimeout(() => alert("የሚወርዱት ተጠናቀዋል!"), 5000);
-    }
-
-    function openSong(t, l, a, n) {
-        vTi.innerText = t; vLy.innerText = l;
-        const saved = localStorage.getItem('audio_'+n);
-        if(saved) { mainAudio.src = saved; mainAudio.style.display='block'; }
-        else if(a) { mainAudio.src = a; mainAudio.style.display='block'; }
-        else { mainAudio.style.display='none'; }
-        showPage('viewer');
-    }
-
-    function saveSong() {
-        const no = parseInt(document.getElementById('sN').value);
-        if(!no) return alert("ቁጥር ያስገቡ!");
-        // ቁጥሩ ካለ ለማረም (Update) በቁጥሩ ስም ሴቭ እናደርገዋለን
-        db.ref('songs/' + no).set({
-            no: no,
-            title: document.getElementById('sT').value,
-            lyric: document.getElementById('sL').value,
-            audio: document.getElementById('sA').value
-        }).then(() => alert("መዝሙሩ ተስተካክሏል/ተጨምሯል!"));
-    }
-
-    function saveUI() { db.ref('appSettings').update({logo:iL.value, color:iC.value}); alert("Saved!"); }
-    function saveStat() { db.ref('stats').set({count: parseInt(sVal.value)}); alert("Stat Updated!"); }
-
     function showPage(id, el) {
         document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
         document.getElementById(id).classList.add('active');
@@ -216,7 +222,6 @@
         if(id === 'map-page' && map) setTimeout(() => map.invalidateSize(), 400);
     }
     function showAdm(id) { document.querySelectorAll('.admin-sec').forEach(s => s.style.display='none'); document.getElementById(id).style.display='block'; }
-
     let cl = 0; function adminClick() { cl++; if(cl === 3) { if(prompt("Admin Code:") === "ttse9@we33") showPage('admin'); cl = 0; } setTimeout(()=>cl=0, 3000); }
 </script>
 </body>

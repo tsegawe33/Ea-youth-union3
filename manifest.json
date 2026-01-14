@@ -1,0 +1,17 @@
+{
+  "name": "EA Youth Union",
+  "short_name": "EA Youth",
+  "description": "የኢትዮጵያ ወጣት ህብረት መዝሙራት እና መረጃ መተግበሪያ",
+  "start_url": "index.html",
+  "display": "standalone",
+  "background_color": "#0a4d1a",
+  "theme_color": "#0a4d1a",
+  "icons": [
+    {
+      "src": "icon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

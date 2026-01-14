@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>EA Youth Union - Pro Max</title>
+    <title>EA Youth Union - Ultimate Pro</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Ethiopic:wght@400;700&display=swap" rel="stylesheet">
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
@@ -12,77 +12,61 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     
     <style>
-        :root { --p: #0a4d1a; --s: #d4af37; --bg: #f4f7f6; --fSize: 18px; --aniSpd: 2s; }
-        body { margin: 0; background: var(--bg); font-family: 'Noto Serif Ethiopic', serif; -webkit-tap-highlight-color: transparent; }
+        :root { --p: #0a4d1a; --s: #d4af37; --bg: #fdfdfd; --fSize: 18px; }
+        body { margin: 0; background: var(--bg); font-family: 'Noto Serif Ethiopic', serif; overflow-x: hidden; }
         
-        /* Modern Animated Splash Screen */
-        #loader { position: fixed; inset: 0; background: linear-gradient(135deg, var(--p), #1a6d2a); z-index: 10000; display: flex; flex-direction: column; align-items: center; justify-content: center; color: white; transition: opacity 0.8s ease; }
-        .logo-ani { width: 120px; height: 120px; border-radius: 30px; border: 3px solid var(--s); animation: pulse var(--aniSpd) infinite; box-shadow: 0 0 30px rgba(212,175,55,0.4); }
-        @keyframes pulse { 0% { transform: scale(0.95); opacity: 0.8; } 50% { transform: scale(1.05); opacity: 1; } 100% { transform: scale(0.95); opacity: 0.8; } }
+        /* New Fast & Elegant Splash Screen */
+        #loader { position: fixed; inset: 0; background: var(--p); z-index: 10000; display: flex; flex-direction: column; align-items: center; justify-content: center; color: white; transition: 0.6s; }
+        .logo-box { width: 100px; height: 100px; background: white; border-radius: 25px; display: flex; align-items: center; justify-content: center; animation: zoomIn 0.8s ease; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+        .logo-box i { font-size: 50px; color: var(--p); }
+        @keyframes zoomIn { from { transform: scale(0); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 
-        header { background: var(--p); color: white; padding: 18px; text-align: center; border-bottom: 3px solid var(--s); position: sticky; top: 0; z-index: 1000; font-weight: bold; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        header { background: var(--p); color: white; padding: 18px; text-align: center; border-bottom: 3px solid var(--s); position: sticky; top: 0; z-index: 1000; box-shadow: 0 2px 10px rgba(0,0,0,0.1); font-weight: bold; }
         .container { max-width: 600px; margin: auto; padding: 15px; padding-bottom: 110px; }
-        .page { display: none; animation: slideUp 0.4s ease; }
+        .page { display: none; animation: fadeIn 0.4s ease; }
         .page.active { display: block; }
-        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         
-        .card { background: white; border-radius: 20px; padding: 20px; margin-bottom: 15px; box-shadow: 0 8px 20px rgba(0,0,0,0.04); border: 1px solid rgba(0,0,0,0.05); }
+        .card { background: white; border-radius: 15px; padding: 20px; margin-bottom: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border: 1px solid #eee; }
         
-        /* Font Controls */
-        .font-ctrl { display: flex; gap: 10px; justify-content: center; margin-bottom: 10px; }
-        .f-btn { background: #eee; border: none; padding: 5px 15px; border-radius: 10px; cursor: pointer; font-weight: bold; }
-
-        /* Navigation */
-        .nav-bar { position: fixed; bottom: 12px; left: 50%; transform: translateX(-50%); width: 92%; background: var(--p); border-radius: 35px; display: flex; justify-content: space-around; padding: 10px; border: 1px solid var(--s); z-index: 1000; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+        /* Navigation Bar */
+        .nav-bar { position: fixed; bottom: 12px; left: 50%; transform: translateX(-50%); width: 92%; background: var(--p); border-radius: 30px; display: flex; justify-content: space-around; padding: 10px; border: 1px solid var(--s); z-index: 1000; }
         .nav-item { color: rgba(255,255,255,0.4); text-align: center; flex:1; cursor: pointer; transition: 0.3s; }
-        .nav-item.active { color: var(--s); transform: translateY(-5px); }
-        .nav-item i { font-size: 20px; }
-        .nav-item span { display: block; font-size: 10px; margin-top: 4px; }
+        .nav-item.active { color: var(--s); transform: scale(1.1); }
+        .nav-item i { font-size: 18px; }
+        .nav-item span { display: block; font-size: 10px; margin-top: 3px; }
 
-        .btn-action { background: var(--s); color: #000; border: none; padding: 15px; width: 100%; border-radius: 15px; font-weight: 900; cursor: pointer; margin-top: 10px; transition: 0.2s; }
-        .btn-action:active { transform: scale(0.96); }
-        
-        #map { height: 400px; width: 100%; border-radius: 20px; border: 2px solid white; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
-        .verse-box { background: linear-gradient(135deg, var(--p), #063111); color: white; border-radius: 25px; padding: 30px; text-align: center; margin-bottom: 20px; }
-        .admin-sec { display: none; background: #f9f9f9; padding: 15px; border-radius: 15px; margin-top: 10px; border: 1px dashed var(--p); }
-        
-        input, textarea { width: 100%; padding: 12px; margin: 8px 0; border-radius: 12px; border: 1px solid #ddd; box-sizing: border-box; font-family: inherit; }
+        .btn-action { background: var(--s); color: black; border: none; padding: 14px; width: 100%; border-radius: 12px; font-weight: bold; cursor: pointer; margin-top: 10px; }
+        input, textarea { width: 100%; padding: 12px; margin: 8px 0; border-radius: 10px; border: 1px solid #ddd; font-family: inherit; box-sizing: border-box; }
+        #map { height: 380px; width: 100%; border-radius: 15px; }
+        .admin-sec { display: none; border-top: 1px solid #eee; padding-top: 15px; margin-top: 15px; }
     </style>
 </head>
 <body>
 
 <div id="loader">
-    <img src="https://via.placeholder.com/150/0a4d1a/d4af37?text=EAYU" class="logo-ani" id="splashLogo">
-    <h2 style="margin-top: 20px; letter-spacing: 2px;">EA YOUTH UNION</h2>
-    <div style="width: 100px; height: 3px; background: rgba(255,255,255,0.2); border-radius: 5px; margin-top: 10px;">
-        <div style="width: 40%; height: 100%; background: var(--s); border-radius: 5px; animation: load 2s infinite;"></div>
-    </div>
-    <style> @keyframes load { 0% { width: 0%; } 100% { width: 100%; } } </style>
+    <div class="logo-box"><i class="fas fa-church"></i></div>
+    <h2 style="margin-top: 20px; font-weight: normal;">EA YOUTH UNION</h2>
 </div>
 
-<header id="appHeader">EA YOUTH UNION</header>
+<header>EA YOUTH UNION</header>
 
 <div class="container">
     <div id="home" class="page active">
-        <div class="verse-box">
-            <h3 id="dailyVerse">"እግዚአብሔር ብርሃኔና መድኃኒቴ ነው"</h3>
-            <small id="verseRef" style="color:var(--s);">መዝሙር 27:1</small>
-        </div>
         <div id="newsFeed"></div>
     </div>
 
     <div id="songs" class="page">
-        <div class="font-ctrl">
-            <button class="f-btn" onclick="changeF(1)">A+</button>
-            <button class="f-btn" onclick="changeF(-1)">A-</button>
+        <div style="display:flex; gap:10px; margin-bottom:10px;">
+            <button class="btn-action" style="margin:0; width:auto; padding:5px 15px;" onclick="changeF(1)">A+</button>
+            <button class="btn-action" style="margin:0; width:auto; padding:5px 15px;" onclick="changeF(-1)">A-</button>
+            <input type="text" id="sSearch" placeholder="መዝሙር ፈልግ..." onkeyup="searchSong(this.value)" style="margin:0;">
         </div>
-        <input type="text" id="sSearch" placeholder="መዝሙር ፈልግ..." onkeyup="searchSong(this.value)">
         <div id="songList"></div>
     </div>
 
     <div id="map-page" class="page">
         <div class="card">
-            <p style="margin:0 0 10px 0; font-size:13px; color:var(--p);"><i class="fas fa-location-arrow"></i> አቅራቢያ ያሉ አድቬንቲስት አብያተ ክርስቲያናት</p>
             <div id="map"></div>
             <button class="btn-action" onclick="findSDA()">በአቅራቢያ ያሉትን ፈልግ</button>
         </div>
@@ -90,40 +74,32 @@
 
     <div id="calendar" class="page">
         <div class="card" style="background:var(--p); color:white; text-align:center;">
-            <h2 id="dateTxt" style="margin:0;"></h2>
-            <p id="ethDate" style="color:var(--s);"></p>
+            <h2 id="dateTxt"></h2>
         </div>
         <div class="card">
             <h4>የደወል ማስታወሻ</h4>
             <input type="time" id="alTime">
-            <button class="btn-action" onclick="alert('ማስታወሻ ተይዟል!')">ማስታወሻ መዝግብ</button>
+            <button class="btn-action">ማስታወሻ መዝግብ</button>
         </div>
     </div>
 
     <div id="thanks" class="page">
         <div id="galleryFeed"></div>
-        <div style="text-align: center; margin-top: 40px;">
-            <i class="fas fa-fingerprint" onclick="adminClick()" style="font-size: 30px; color: #ddd; cursor: pointer;"></i>
+        <div style="text-align: center; margin-top: 50px; opacity: 0.2;">
+            <i class="fas fa-cog" onclick="adminClick()" style="font-size: 24px; cursor: pointer;"></i>
         </div>
     </div>
 
     <div id="admin" class="page">
-        <div class="card" style="background:#333; color:white; display:flex; justify-content:space-between; align-items:center;">
-            <h3 style="margin:0;">Admin Control</h3>
-            <i class="fas fa-times" onclick="showPage('home')" style="cursor:pointer;"></i>
-        </div>
-
+        <div class="card" style="background:#333; color:white;"><h3>የአድሚን ክፍል</h3></div>
         <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
             <button class="btn-action" onclick="showAdm('adm-n')">ዜና</button>
             <button class="btn-action" onclick="showAdm('adm-s')">መዝሙር</button>
             <button class="btn-action" onclick="showAdm('adm-g')">ምስጋና (Edit)</button>
-            <button class="btn-action" onclick="showAdm('adm-a')">Animation</button>
         </div>
-
-        <div id="adm-n" class="admin-sec"><input id="nT" placeholder="ርዕስ"><textarea id="nD" placeholder="ዝርዝር"></textarea><button class="btn-action" onclick="saveNews()">ዜና ልቀቅ</button></div>
+        <div id="adm-n" class="admin-sec"><input id="nT" placeholder="ርዕስ"><textarea id="nD" placeholder="ዝርዝር"></textarea><button class="btn-action" onclick="saveNews()">ልቀቅ</button></div>
         <div id="adm-s" class="admin-sec"><input id="sN" type="number" placeholder="ቁጥር"><input id="sT" placeholder="ርዕስ"><textarea id="sL" rows="5" placeholder="ግጥም"></textarea><input id="sA" placeholder="Audio Link"><button class="btn-action" onclick="saveSong()">መዝሙር ጫን</button></div>
-        <div id="adm-g" class="admin-sec"><h4>የምስጋና ምስል ይቀይሩ</h4><input id="gImg" placeholder="የምስል URL (Link)"><button class="btn-action" onclick="saveGallery()">ምስል አዘምን</button></div>
-        <div id="adm-a" class="admin-sec"><h4>Animation Edit</h4><p>የመግቢያ ፍጥነት (ሰከንድ)</p><input type="range" min="1" max="5" value="2" oninput="updateAni(this.value)"><button class="btn-action" onclick="alert('ተስተካክሏል!')">አስቀምጥ</button></div>
+        <div id="adm-g" class="admin-sec"><input id="gImg" placeholder="Image URL"><button class="btn-action" onclick="saveGallery()">አዘምን</button></div>
     </div>
 
     <div id="viewer" class="page">
@@ -139,8 +115,8 @@
 <nav class="nav-bar">
     <div class="nav-item active" onclick="showPage('home', this)"><i class="fas fa-home"></i><span>ቤት</span></div>
     <div class="nav-item" onclick="showPage('songs', this)"><i class="fas fa-music"></i><span>መዝሙር</span></div>
-    <div class="nav-item" onclick="showPage('calendar', this)"><i class="fas fa-calendar-day"></i><span>ቀን</span></div>
-    <div class="nav-item" onclick="showPage('map-page', this)"><i class="fas fa-map-marked-alt"></i><span>ካርታ</span></div>
+    <div class="nav-item" onclick="showPage('calendar', this)"><i class="fas fa-calendar-alt"></i><span>ቀን</span></div>
+    <div class="nav-item" onclick="showPage('map-page', this)"><i class="fas fa-map-marker-alt"></i><span>ካርታ</span></div>
     <div class="nav-item" onclick="showPage('thanks', this)"><i class="fas fa-heart"></i><span>ምስጋና</span></div>
 </nav>
 
@@ -149,9 +125,9 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
-    let map, userMarker;
+    let map;
     window.onload = () => {
-        setTimeout(() => { document.getElementById('loader').style.opacity='0'; setTimeout(()=>document.getElementById('loader').style.display='none', 800); }, 2500);
+        setTimeout(() => { document.getElementById('loader').style.display='none'; }, 1800);
         document.getElementById('dateTxt').innerText = new Date().toLocaleDateString('am-ET', {weekday:'long', month:'long', day:'numeric'});
         loadData(); initMap();
     };
@@ -159,62 +135,45 @@
     function initMap() {
         map = L.map('map').setView([9.0192, 38.7525], 6);
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
-        if(navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(p => {
-                const lat = p.coords.latitude, lon = p.coords.longitude;
-                map.setView([lat, lon], 13);
-                userMarker = L.marker([lat, lon]).addTo(map).bindPopup("አንተ እዚህ ነህ").openPopup();
-                findSDA(lat, lon);
-            });
-        }
     }
 
-    async function findSDA(lat, lon) {
-        const queryLat = lat || map.getCenter().lat;
-        const queryLon = lon || map.getCenter().lng;
-        const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=Seventh+Day+Adventist+Church&limit=10&lat=${queryLat}&lon=${queryLon}`);
+    async function findSDA() {
+        if(!confirm("አቅራቢያ ያሉ ቤተክርስቲያኖችን ለመፈለግ ኢንተርኔት ይጠቀማል፣ ይሁን?")) return;
+        const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=Seventh+Day+Adventist+Church&limit=10&lat=${map.getCenter().lat}&lon=${map.getCenter().lng}`);
         const data = await res.json();
-        data.forEach(place => {
-            L.marker([place.lat, place.lon]).addTo(map).bindPopup(place.display_name);
-        });
+        data.forEach(p => L.marker([p.lat, p.lon]).addTo(map).bindPopup(p.display_name));
     }
 
     function loadData() {
-        db.ref('news').on('value', s => {
-            let h = ""; s.forEach(c => h = `<div class="card"><h3>${c.val().title}</h3><p>${c.val().desc}</p></div>` + h);
-            newsFeed.innerHTML = h;
-        });
-        db.ref('songs').orderByChild('no').on('value', s => {
-            let h = ""; s.forEach(c => h += `<div class="card" onclick="openSong('${c.val().title}',\`${c.val().lyric}\`,'${c.val().audio}')"><b>${c.val().no}. ${c.val().title}</b><i class="fas fa-chevron-right" style="float:right; opacity:0.3;"></i></div>`);
-            songList.innerHTML = h;
-        });
-        db.ref('dailyVerse').on('value', s => { if(s.val()){ dailyVerse.innerText = s.val().text; verseRef.innerText = s.val().ref; } });
-        db.ref('gallery').on('value', s => { if(s.val()) galleryFeed.innerHTML = `<img src="${s.val().url}" style="width:100%; border-radius:20px; box-shadow:0 10px 20px rgba(0,0,0,0.1);">`; });
-        db.ref('appSettings').on('value', s => { if(s.val()){ if(s.val().color) document.documentElement.style.setProperty('--p', s.val().color); if(s.val().logo) splashLogo.src = s.val().logo; } });
+        db.ref('news').on('value', s => { let h = ""; s.forEach(c => h = `<div class="card"><h3>${c.val().title}</h3><p>${c.val().desc}</p></div>` + h); newsFeed.innerHTML = h; });
+        db.ref('songs').orderByChild('no').on('value', s => { let h = ""; s.forEach(c => h += `<div class="card" onclick="openSong('${c.val().title}',\`${c.val().lyric}\`,'${c.val().audio}')"><b>${c.val().no}. ${c.val().title}</b></div>`); songList.innerHTML = h; });
+        db.ref('gallery').on('value', s => { if(s.val()) galleryFeed.innerHTML = `<img src="${s.val().url}" style="width:100%; border-radius:15px;">`; });
     }
 
     function openSong(t, l, a) {
         vTitle.innerText = t; vLyric.innerText = l;
-        if(a){ mainAudio.src = a; mainAudio.style.display = 'block'; } else { mainAudio.style.display = 'none'; }
+        if(a && a !== "") {
+            if(confirm("ይህ መዝሙር ኦዲዮ አለው፤ ኢንተርኔት በመጠቀም እንዲከፍት ይፈቅዳሉ? (ዳታ ለመቆጠብ 'አይ' ማለት ይችላሉ)")) {
+                mainAudio.src = a; mainAudio.style.display = 'block';
+            } else { mainAudio.style.display = 'none'; }
+        } else { mainAudio.style.display = 'none'; }
         showPage('viewer');
     }
 
     function changeF(v) { let cur = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--fSize')); document.documentElement.style.setProperty('--fSize', (cur + v) + 'px'); }
-    function updateAni(v) { document.documentElement.style.setProperty('--aniSpd', v + 's'); db.ref('appSettings').update({aniSpeed: v}); }
-    
-    function saveNews() { db.ref('news').push({title:nT.value, desc:nD.value}).then(()=>alert("ዜና ወጥቷል!")); }
+    function saveNews() { db.ref('news').push({title:nT.value, desc:nD.value}).then(()=>alert("ተለቅቋል!")); }
     function saveSong() { db.ref('songs').push({no:parseInt(sN.value), title:sT.value, lyric:sL.value, audio:sA.value}).then(()=>alert("ተጭኗል!")); }
-    function saveGallery() { db.ref('gallery').set({url:gImg.value}).then(()=>alert("ምስጋና ምስል ተቀይሯል!")); }
+    function saveGallery() { db.ref('gallery').set({url:gImg.value}).then(()=>alert("ተቀይሯል!")); }
 
     function showPage(id, el) {
         document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
         document.getElementById(id).classList.add('active');
         if(el) { document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active')); el.classList.add('active'); }
         if(id === 'map-page') setTimeout(() => map.invalidateSize(), 300);
-        window.scrollTo(0,0);
     }
     function showAdm(id) { document.querySelectorAll('.admin-sec').forEach(s => s.style.display='none'); document.getElementById(id).style.display='block'; }
-    let cl = 0; function adminClick() { cl++; if(cl === 3) { if(prompt("አድሚን ኮድ ያስገቡ:") === "ttse9@we33") showPage('admin'); cl = 0; } setTimeout(() => cl = 0, 3000); }
+    let cl = 0; function adminClick() { cl++; if(cl === 3) { if(prompt("ኮድ:") === "ttse9@we33") showPage('admin'); cl = 0; } setTimeout(() => cl = 0, 3000); }
+    function searchSong(q) { let qry = q.toLowerCase(); document.querySelectorAll('#songList .card').forEach(i => i.style.display = i.innerText.toLowerCase().includes(qry) ? 'block' : 'none'); }
 </script>
 </body>
 </html>

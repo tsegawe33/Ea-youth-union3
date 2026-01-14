@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>EA Youth Union - Full Version</title>
+    <title>EA Youth Union - Final Stable</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Ethiopic:wght@400;700&display=swap" rel="stylesheet">
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
@@ -12,77 +12,70 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     
     <style>
-        :root { --p: #0a4d1a; --s: #d4af37; --bg: #f4f7f6; --fSize: 18px; --aniSpd: 2s; }
-        body { margin: 0; background: var(--bg); font-family: 'Noto Serif Ethiopic', serif; -webkit-tap-highlight-color: transparent; }
+        :root { --p: #0a4d1a; --s: #d4af37; --bg: #f4f7f6; --fSize: 18px; --aniSpd: 1.5s; }
+        body { margin: 0; background: var(--bg); font-family: 'Noto Serif Ethiopic', serif; }
         
-        #loader { position: fixed; inset: 0; background: var(--p); z-index: 10000; display: flex; flex-direction: column; align-items: center; justify-content: center; color: white; transition: 0.8s; }
-        .logo-ani { width: 100px; height: 100px; border-radius: 30px; border: 3px solid var(--s); animation: pulse var(--aniSpd) infinite; }
-        @keyframes pulse { 0% { transform: scale(0.95); opacity: 0.8; } 50% { transform: scale(1.05); opacity: 1; } 100% { transform: scale(0.95); opacity: 0.8; } }
+        #loader { position: fixed; inset: 0; background: var(--p); z-index: 10000; display: flex; flex-direction: column; align-items: center; justify-content: center; color: white; transition: 0.6s; }
+        .logo-ani { width: 90px; height: 90px; border-radius: 20px; background: white; border: 3px solid var(--s); animation: bounce var(--aniSpd) infinite; }
+        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
 
         header { background: var(--p); color: white; padding: 18px; text-align: center; border-bottom: 3px solid var(--s); position: sticky; top: 0; z-index: 1000; font-weight: bold; }
         .container { max-width: 600px; margin: auto; padding: 15px; padding-bottom: 110px; }
-        .page { display: none; animation: slideUp 0.4s ease; }
-        .page.active { display: block; }
-        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-        
-        .card { background: white; border-radius: 20px; padding: 20px; margin-bottom: 15px; box-shadow: 0 8px 20px rgba(0,0,0,0.04); border: 1px solid rgba(0,0,0,0.05); }
-        .nav-bar { position: fixed; bottom: 12px; left: 50%; transform: translateX(-50%); width: 92%; background: var(--p); border-radius: 35px; display: flex; justify-content: space-around; padding: 10px; border: 1px solid var(--s); z-index: 1000; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
-        .nav-item { color: rgba(255,255,255,0.4); text-align: center; flex:1; cursor: pointer; transition: 0.3s; }
-        .nav-item.active { color: var(--s); transform: translateY(-5px); }
-        .nav-item i { font-size: 20px; }
-        .nav-item span { display: block; font-size: 10px; margin-top: 4px; }
+        .page { display: none; }
+        .page.active { display: block; animation: fadeIn 0.4s; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        .btn-action { background: var(--s); color: #000; border: none; padding: 15px; width: 100%; border-radius: 15px; font-weight: 900; cursor: pointer; margin-top: 10px; transition: 0.2s; display: flex; align-items: center; justify-content: center; gap: 10px; }
-        .admin-sec { display: none; background: #f9f9f9; padding: 15px; border-radius: 15px; margin-top: 10px; border: 1px dashed var(--p); }
-        #map { height: 400px; width: 100%; border-radius: 20px; }
-        #dlProgress { width: 0%; height: 4px; background: var(--s); position: fixed; top: 0; left: 0; z-index: 2001; transition: 0.2s; }
-        input, textarea { width: 100%; padding: 12px; margin: 8px 0; border-radius: 12px; border: 1px solid #ddd; box-sizing: border-box; }
+        .card { background: white; border-radius: 18px; padding: 20px; margin-bottom: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
+        .nav-bar { position: fixed; bottom: 10px; left: 50%; transform: translateX(-50%); width: 94%; background: var(--p); border-radius: 35px; display: flex; justify-content: space-around; padding: 10px; border: 1px solid var(--s); z-index: 2000; }
+        .nav-item { color: rgba(255,255,255,0.4); text-align: center; flex:1; cursor: pointer; transition: 0.3s; }
+        .nav-item.active { color: var(--s); transform: scale(1.1); }
+        .nav-item span { display: block; font-size: 10px; margin-top: 2px; }
+
+        .btn-action { background: var(--s); color: black; border: none; padding: 15px; width: 100%; border-radius: 12px; font-weight: bold; cursor: pointer; margin-top: 10px; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        #map { height: 350px; width: 100%; border-radius: 15px; background: #eee; }
+        .admin-sec { display: none; background: #fff; padding: 15px; border-radius: 12px; margin-top: 10px; border: 1px solid #ddd; }
+        input, textarea { width: 100%; padding: 12px; margin: 8px 0; border-radius: 10px; border: 1px solid #ddd; box-sizing: border-box; }
     </style>
 </head>
 <body>
 
-<div id="dlProgress"></div>
-<div id="loader"><div class="logo-ani"></div><h2 style="margin-top:20px;">EA YOUTH UNION</h2></div>
+<div id="loader"><div class="logo-ani"></div><h3 style="margin-top:15px;">EA YOUTH UNION</h3></div>
 
 <header id="appHeader">EA YOUTH UNION</header>
 
 <div class="container">
     <div id="home" class="page active">
-        <div class="card" style="background: linear-gradient(135deg, var(--p), #063111); color: white; text-align: center;">
-            <h3 id="dailyVerse">"እግዚአብሔር ብርሃኔና መድኃኒቴ ነው"</h3>
-            <small id="verseRef" style="color:var(--s);">መዝሙር 27:1</small>
+        <div class="card" style="background: var(--p); color: white; text-align: center;">
+            <h3 id="dailyVerse">...</h3>
+            <small id="verseRef" style="color:var(--s);"></small>
         </div>
         <div id="newsFeed"></div>
     </div>
 
     <div id="songs" class="page">
-        <button class="btn-action" style="background:#222; color:white;" onclick="downloadAllAudio()">
-            <i class="fas fa-download"></i> ሁሉንም መዝሙሮች ለኦፍላይን አውርድ
+        <button class="btn-action" style="background:#111; color:white;" onclick="downloadAllAudio()">
+            <i class="fas fa-cloud-download-alt"></i> ሁሉንም መዝሙሮች ለኦፍላይን አውርድ
         </button>
-        <div class="card" style="display:flex; gap:10px; margin-top:10px; justify-content:center;">
-            <button class="btn-action" style="width:auto; margin:0;" onclick="changeF(1)">A+</button>
-            <button class="btn-action" style="width:auto; margin:0;" onclick="changeF(-1)">A-</button>
-        </div>
-        <input type="text" id="sSearch" placeholder="መዝሙር ፈልግ..." onkeyup="searchSong(this.value)">
+        <input type="text" placeholder="መዝሙር ፈልግ..." onkeyup="searchSong(this.value)" style="margin-top:15px;">
         <div id="songList"></div>
+    </div>
+
+    <div id="calendar" class="page">
+        <div class="card" style="background:var(--p); color:white; text-align:center;">
+            <h2 id="ethDate"></h2>
+        </div>
+        <div class="card">
+            <h4>የደወል ማስታወሻ</h4>
+            <input type="time" id="alarmTime">
+            <button class="btn-action" onclick="alert('ማስታወሻ ተይዟል!')">Save Alarm</button>
+        </div>
     </div>
 
     <div id="map-page" class="page">
         <div class="card">
             <h4>አቅራቢያ ያሉ አድቬንቲስት አብያተ ክርስቲያናት</h4>
             <div id="map"></div>
-            <button class="btn-action" onclick="findSDA()">በአቅራቢያ ያሉትን ፈልግ</button>
-        </div>
-    </div>
-
-    <div id="calendar" class="page">
-        <div class="card" style="background:var(--p); color:white; text-align:center;">
-            <h2 id="dateTxt"></h2>
-        </div>
-        <div class="card">
-            <h4>የደወል ማስታወሻ</h4>
-            <input type="time" id="alTime">
-            <button class="btn-action" onclick="alert('ማስታወሻ ተይዟል!')">ማስታወሻ መዝግብ</button>
+            <button class="btn-action" onclick="findSDA()">አሁኑኑ ፈልግ</button>
         </div>
     </div>
 
@@ -90,45 +83,42 @@
         <div id="galleryFeed"></div>
         <div class="card"><p id="thanksText" style="text-align: center;"></p></div>
         <div style="text-align: center; margin-top: 50px;">
-            <span onclick="adminClick()" style="color: #eee; cursor: pointer; font-size: 12px;">⚫</span>
+            <span onclick="adminClick()" style="color: #eee; cursor: pointer;">⚫</span>
         </div>
     </div>
 
     <div id="admin" class="page">
-        <div class="card" style="background:#333; color:white;">
-            <h3>Admin Tunnel <span id="statText" style="float:right; color:var(--s);">0</span></h3>
+        <div class="card" style="background: #222; color: white;">
+            <h3>Admin Panel <span id="uStat" style="float:right; color:var(--s);">0</span></h3>
         </div>
         <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
-            <button class="btn-action" onclick="showAdm('adm-ui')">UI/Logo</button>
-            <button class="btn-action" onclick="showAdm('adm-news')">ዜና/ጥቅስ</button>
-            <button class="btn-action" onclick="showAdm('adm-song')">መዝሙር</button>
-            <button class="btn-action" onclick="showAdm('adm-stat')">Stat Edit</button>
-            <button class="btn-action" onclick="showAdm('adm-thank')">ምስጋና Edit</button>
+            <button class="btn-action" onclick="showAdm('a-ui')">UI/Logo</button>
+            <button class="btn-action" onclick="showAdm('a-news')">News/Verse</button>
+            <button class="btn-action" onclick="showAdm('a-song')">Add Song</button>
+            <button class="btn-action" onclick="showAdm('a-stat')">Stat Edit</button>
         </div>
-
-        <div id="adm-ui" class="admin-sec"><input id="iL" placeholder="Logo URL"><input type="color" id="iC"><input type="range" min="0.5" max="4" step="0.5" id="iA" oninput="updateAni(this.value)"><button class="btn-action" onclick="saveUI()">Save</button></div>
-        <div id="adm-news" class="admin-sec"><input id="nT" placeholder="ዜና ርዕስ"><textarea id="nD" placeholder="ዝርዝር"></textarea><input id="vT" placeholder="ጥቅስ"><button class="btn-action" onclick="saveNews()">Update</button></div>
-        <div id="adm-song" class="admin-sec"><input id="sN" type="number" placeholder="No"><input id="sT" placeholder="ርዕስ"><textarea id="sL" placeholder="ግጥም"></textarea><input id="sA" placeholder="Audio Link"><button class="btn-action" onclick="saveSong()">Add</button></div>
-        <div id="adm-stat" class="admin-sec"><input id="sVal" type="number" placeholder="የተጠቃሚ ቁጥር"><button class="btn-action" onclick="saveStat()">Update Stat</button></div>
-        <div id="adm-thank" class="admin-sec"><input id="tI" placeholder="Image URL"><textarea id="tT" placeholder="Message"></textarea><button class="btn-action" onclick="saveThanks()">Update Thanks</button></div>
+        <div id="a-ui" class="admin-sec"><input id="iL" placeholder="Logo URL"><input type="color" id="iC"><button class="btn-action" onclick="saveUI()">Save</button></div>
+        <div id="a-news" class="admin-sec"><input id="nT" placeholder="Title"><textarea id="nD" placeholder="Details"></textarea><button class="btn-action" onclick="saveNews()">Post</button></div>
+        <div id="a-song" class="admin-sec"><input id="sN" type="number" placeholder="No"><input id="sT" placeholder="Title"><textarea id="sL" placeholder="Lyric"></textarea><input id="sA" placeholder="Audio Link"><button class="btn-action" onclick="saveSong()">Add</button></div>
+        <div id="a-stat" class="admin-sec"><input id="sVal" type="number" placeholder="የተጠቃሚ ቁጥር"><button class="btn-action" onclick="saveStat()">Update</button></div>
     </div>
 
     <div id="viewer" class="page">
         <div class="card">
-            <h2 id="vTitle" style="color:var(--p); text-align:center;"></h2>
-            <audio id="mainAudio" controls style="width:100%; margin:15px 0;"></audio>
-            <div id="vLyric" style="white-space: pre-line; line-height: 2; font-size: var(--fSize);"></div>
+            <h2 id="vTi" style="text-align: center; color: var(--p);"></h2>
+            <audio id="mainAudio" controls style="width: 100%; margin: 15px 0;"></audio>
+            <div id="vLy" style="white-space: pre-line; line-height: 2; font-size: var(--fSize);"></div>
             <button class="btn-action" onclick="showPage('songs')">ተመለስ</button>
         </div>
     </div>
 </div>
 
 <nav class="nav-bar">
-    <div class="nav-item active" onclick="showPage('home', this)"><i class="fas fa-home"></i><span>ቤት</span></div>
-    <div class="nav-item" onclick="showPage('songs', this)"><i class="fas fa-music"></i><span>መዝሙር</span></div>
-    <div class="nav-item" onclick="showPage('calendar', this)"><i class="fas fa-calendar-day"></i><span>ቀን</span></div>
-    <div class="nav-item" onclick="showPage('map-page', this)"><i class="fas fa-map-marked-alt"></i><span>ካርታ</span></div>
-    <div class="nav-item" onclick="showPage('thanks', this)"><i class="fas fa-heart"></i><span>ምስጋና</span></div>
+    <div class="nav-item active" onclick="showPage('home', this)"><i class="fas fa-home"></i><span>Home</span></div>
+    <div class="nav-item" onclick="showPage('songs', this)"><i class="fas fa-music"></i><span>Songs</span></div>
+    <div class="nav-item" onclick="showPage('calendar', this)"><i class="fas fa-calendar-alt"></i><span>Date</span></div>
+    <div class="nav-item" onclick="showPage('map-page', this)"><i class="fas fa-map-marker-alt"></i><span>Map</span></div>
+    <div class="nav-item" onclick="showPage('thanks', this)"><i class="fas fa-heart"></i><span>Thanks</span></div>
 </nav>
 
 <script>
@@ -139,84 +129,71 @@
     let map;
     window.onload = () => {
         setTimeout(() => document.getElementById('loader').style.display='none', 1500);
-        document.getElementById('dateTxt').innerText = new Date().toLocaleDateString('am-ET', {weekday:'long', month:'long', day:'numeric'});
-        loadData(); initMap();
+        ethDate.innerText = new Date().toLocaleDateString('am-ET', {weekday:'long', month:'long', day:'numeric'});
+        updateStats(); // ስታቲስቲክስ እንዲቆጥር
+        loadData();
+        initMap();
     };
 
-    function initMap() {
-        map = L.map('map').setView([9.0192, 38.7525], 6);
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+    function updateStats() {
+        const userRef = db.ref('stats/count');
+        userRef.transaction(current => (current || 0) + 1);
     }
 
-    async function findSDA() {
+    function initMap() {
+        try {
+            map = L.map('map').setView([9.0192, 38.7525], 6);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+        } catch(e) { document.getElementById('map').innerHTML = "<p style='padding:20px; text-align:center;'>ካርታውን ለመጫን ኢንተርኔት ያስፈልጋል!</p>"; }
+    }
+
+    function findSDA() {
         if(navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(async p => {
+            navigator.geolocation.getCurrentPosition(p => {
                 const lat = p.coords.latitude, lon = p.coords.longitude;
-                map.setView([lat, lon], 13);
+                map.setView([lat, lon], 14);
                 L.marker([lat, lon]).addTo(map).bindPopup("አንተ እዚህ ነህ").openPopup();
-                const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=Seventh+Day+Adventist+Church&limit=10&lat=${lat}&lon=${lon}`);
-                const data = await res.json();
-                data.forEach(place => L.marker([place.lat, place.lon]).addTo(map).bindPopup(place.display_name));
+                fetch(`https://nominatim.openstreetmap.org/search?format=json&q=Seventh+Day+Adventist+Church&limit=5&lat=${lat}&lon=${lon}`)
+                .then(r => r.json()).then(d => d.forEach(pl => L.marker([pl.lat, pl.lon]).addTo(map).bindPopup(pl.display_name)));
             });
         }
     }
 
     function loadData() {
-        const cachedSongs = JSON.parse(localStorage.getItem('songs') || '[]');
-        if(cachedSongs.length > 0) renderSongs(cachedSongs);
-
-        db.ref('news').on('value', s => {
-            let h = ""; s.forEach(c => h = `<div class="card"><h3>${c.val().title}</h3><p>${c.val().desc}</p></div>` + h);
-            newsFeed.innerHTML = h;
-        });
+        db.ref('news').on('value', s => { let h = ""; s.forEach(c => h = `<div class="card"><h3>${c.val().title}</h3><p>${c.val().desc}</p></div>` + h); newsFeed.innerHTML = h; });
         db.ref('songs').orderByChild('no').on('value', s => {
-            let songs = []; s.forEach(c => songs.push(c.val()));
-            localStorage.setItem('songs', JSON.stringify(songs));
-            renderSongs(songs);
+            let h = ""; s.forEach(c => {
+                const saved = localStorage.getItem('audio_'+c.val().no) ? ' ✅' : '';
+                h += `<div class="card" onclick="openSong('${c.val().title}',\`${c.val().lyric}\`,'${c.val().audio}',${c.val().no})">${c.val().no}. ${c.val().title}${saved}</div>`;
+            });
+            songList.innerHTML = h;
         });
-        db.ref('dailyVerse').on('value', s => { if(s.val()){ dailyVerse.innerText = s.val().text; } });
-        db.ref('appSettings').on('value', s => { if(s.val()){ if(s.val().color) document.documentElement.style.setProperty('--p', s.val().color); } });
-        db.ref('thanksData').on('value', s => { if(s.val()){ galleryFeed.innerHTML = `<img src="${s.val().img}" style="width:100%; border-radius:20px;">`; thanksText.innerText = s.val().txt; } });
-        db.ref('stats').on('value', s => { if(s.val()) statText.innerText = s.val().count; });
-    }
-
-    function renderSongs(songs) {
-        let h = ""; songs.forEach(s => {
-            const saved = localStorage.getItem('audio_' + s.no) ? ' <i class="fas fa-check-circle" style="color:green"></i>' : '';
-            h += `<div class="card" onclick="openSong('${s.title}',\`${s.lyric}\`,'${s.audio}',${s.no})"><b>${s.no}. ${s.title}${saved}</b></div>`;
-        });
-        songList.innerHTML = h;
+        db.ref('dailyVerse').on('value', s => { if(s.val()) dailyVerse.innerText = s.val().text; });
+        db.ref('stats/count').on('value', s => uStat.innerText = s.val() || 0);
     }
 
     async function downloadAllAudio() {
-        const songs = JSON.parse(localStorage.getItem('songs') || '[]');
-        if(songs.length === 0) return;
-        if(!confirm("ሁሉንም ኦዲዮዎች በትንሽ ዳታ አጠቃቀም ማውረድ ትፈልጋለህ?")) return;
-        
-        let count = 0;
-        for(let s of songs) {
-            if(s.audio && !localStorage.getItem('audio_'+s.no)) {
-                try {
-                    const res = await fetch(s.audio);
+        alert("የመዝሙር ዳውንሎድ ተጀምሯል። እባክህ ትንሽ ጠብቅ...");
+        db.ref('songs').once('value', async s => {
+            let total = s.numChildren(), count = 0;
+            s.forEach(async c => {
+                const data = c.val();
+                if(data.audio && !localStorage.getItem('audio_'+data.no)) {
+                    const res = await fetch(data.audio);
                     const blob = await res.blob();
                     const reader = new FileReader();
-                    reader.onloadend = () => {
-                        localStorage.setItem('audio_'+s.no, reader.result);
-                        count++;
-                        document.getElementById('dlProgress').style.width = (count/songs.length*100)+'%';
-                        if(count === songs.length) alert("ሁሉም ወርደዋል!");
-                    };
+                    reader.onloadend = () => { localStorage.setItem('audio_'+data.no, reader.result); count++; if(count===total) alert("ሁሉም ወርደዋል!"); };
                     reader.readAsDataURL(blob);
-                } catch(e) {}
-            }
-        }
+                }
+            });
+        });
     }
 
     function openSong(t, l, a, n) {
-        vTitle.innerText = t; vLyric.innerText = l;
+        vTi.innerText = t; vLy.innerText = l;
         const saved = localStorage.getItem('audio_'+n);
         if(saved) { mainAudio.src = saved; mainAudio.style.display='block'; }
-        else if(a) { if(confirm("ይህ አልወረደም በኢንተርኔት ይከፈት?")) { mainAudio.src = a; mainAudio.style.display='block'; } }
+        else if(a) { mainAudio.src = a; mainAudio.style.display='block'; }
         else { mainAudio.style.display='none'; }
         showPage('viewer');
     }
@@ -225,19 +202,14 @@
         document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
         document.getElementById(id).classList.add('active');
         if(el) { document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active')); el.classList.add('active'); }
-        if(id === 'map-page') setTimeout(() => map.invalidateSize(), 400);
+        if(id === 'map-page' && map) setTimeout(() => map.invalidateSize(), 400);
     }
 
     function showAdm(id) { document.querySelectorAll('.admin-sec').forEach(s => s.style.display='none'); document.getElementById(id).style.display='block'; }
     function saveUI() { db.ref('appSettings').update({logo:iL.value, color:iC.value}); alert("Saved!"); }
-    function saveNews() { db.ref('news').push({title:nT.value, desc:nD.value}); db.ref('dailyVerse').set({text:vT.value}); alert("Updated!"); }
-    function saveSong() { db.ref('songs').push({no:parseInt(sN.value), title:sT.value, lyric:sL.value, audio:sA.value}); alert("Added!"); }
-    function saveStat() { db.ref('stats').set({count: sVal.value}); alert("Stat Updated!"); }
-    function saveThanks() { db.ref('thanksData').set({img:tI.value, txt:tT.value}); alert("Thanks Updated!"); }
-    function changeF(v) { let cur = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--fSize')); document.documentElement.style.setProperty('--fSize', (cur + v) + 'px'); }
-    function updateAni(v) { document.documentElement.style.setProperty('--aniSpd', v+'s'); }
+    function saveStat() { db.ref('stats').set({count: parseInt(sVal.value)}); alert("Stat Updated!"); }
 
-    let cl = 0; function adminClick() { cl++; if(cl === 3) { if(prompt("Code:") === "ttse9@we33") showPage('admin'); cl = 0; } setTimeout(()=>cl=0, 3000); }
+    let cl = 0; function adminClick() { cl++; if(cl === 3) { if(prompt("Admin Code:") === "ttse9@we33") showPage('admin'); cl = 0; } setTimeout(()=>cl=0, 3000); }
 </script>
 </body>
 </html>

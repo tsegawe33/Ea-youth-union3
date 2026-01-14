@@ -3,91 +3,92 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>EA Youth Union - True Offline</title>
+    <title>EA Youth Union - Ultimate Offline</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Ethiopic:wght@400;700&display=swap" rel="stylesheet">
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
-        /* CSS Variables - ኦፍላይን ቢሆንም አይቀየሩም */
-        :root { --p: #0a4d1a; --s: #d4af37; --bg: #f4f7f6; --fSize: 18px; --aniSpd: 0.6s; }
+        :root { --p: #0a4d1a; --s: #d4af37; --bg: #f4f7f6; --fSize: 18px; }
+        body { margin: 0; background: var(--bg); font-family: 'Noto Serif Ethiopic', serif; -webkit-user-select: none; }
         
-        body { margin: 0; background: var(--bg); font-family: 'Noto Serif Ethiopic', serif; overflow-x: hidden; }
-        
-        /* Faster Splash */
         #loader { position: fixed; inset: 0; background: var(--p); z-index: 10000; display: flex; flex-direction: column; align-items: center; justify-content: center; color: white; transition: 0.5s; }
-        .logo-box { width: 90px; height: 90px; background: white; border-radius: 20px; border: 3px solid var(--s); display: flex; align-items: center; justify-content: center; animation: pop var(--aniSpd) ease-out; }
-        @keyframes pop { from { transform: scale(0); } to { transform: scale(1); } }
+        .logo-ani { width: 80px; height: 80px; background: white; border-radius: 50%; border: 3px solid var(--s); animation: pulse 1.5s infinite; }
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
 
         header { background: var(--p); color: white; padding: 18px; text-align: center; border-bottom: 3px solid var(--s); font-weight: bold; position: sticky; top: 0; z-index: 1000; }
-        .container { max-width: 600px; margin: auto; padding: 15px; padding-bottom: 100px; }
-        
+        .container { max-width: 600px; margin: auto; padding: 15px; padding-bottom: 110px; }
         .page { display: none; }
-        .page.active { display: block; animation: slideIn 0.3s ease; }
-        @keyframes slideIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .page.active { display: block; animation: fadeIn 0.4s; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
         .card { background: white; border-radius: 15px; padding: 20px; margin-bottom: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
-        
-        /* Bottom Navigation */
-        .nav-bar { position: fixed; bottom: 8px; left: 50%; transform: translateX(-50%); width: 92%; background: var(--p); border-radius: 30px; display: flex; justify-content: space-around; padding: 10px; border: 1px solid var(--s); z-index: 2000; }
-        .nav-item { color: rgba(255,255,255,0.3); text-align: center; cursor: pointer; transition: 0.3s; }
-        .nav-item.active { color: var(--s); transform: scale(1.1); }
-        .nav-item i { font-size: 22px; }
+        .nav-bar { position: fixed; bottom: 10px; left: 50%; transform: translateX(-50%); width: 94%; background: var(--p); border-radius: 35px; display: flex; justify-content: space-around; padding: 12px; border: 1px solid var(--s); z-index: 2000; }
+        .nav-item { color: rgba(255,255,255,0.3); text-align: center; flex:1; cursor: pointer; }
+        .nav-item.active { color: var(--s); }
 
-        .btn-action { background: var(--s); color: black; border: none; padding: 14px; width: 100%; border-radius: 12px; font-weight: bold; cursor: pointer; margin-top: 10px; }
-        .admin-sec { display: none; background: #fff; padding: 15px; border-radius: 12px; margin-top: 10px; border: 1px dashed var(--p); }
+        .btn-action { background: var(--s); color: black; border: none; padding: 14px; width: 100%; border-radius: 12px; font-weight: bold; cursor: pointer; margin-top: 10px; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .admin-sec { display: none; background: #f9f9f9; padding: 15px; border-radius: 12px; margin-top: 10px; border: 1px solid #ddd; }
         input, textarea { width: 100%; padding: 12px; margin: 8px 0; border-radius: 10px; border: 1px solid #ddd; box-sizing: border-box; }
+        
+        /* Download Progress Bar */
+        #dlProgress { width: 0%; height: 5px; background: var(--s); position: fixed; top: 0; left: 0; z-index: 2001; transition: 0.3s; }
     </style>
 </head>
 <body>
 
-<div id="loader">
-    <div class="logo-box"><img src="https://via.placeholder.com/70" id="splashLogo" style="width:70px; border-radius:15px;"></div>
-    <h3 style="margin-top: 15px;">EA YOUTH UNION</h3>
-</div>
+<div id="dlProgress"></div>
+<div id="loader"><div class="logo-ani"></div><h3>EA YOUTH UNION</h3></div>
 
-<header id="appHeader">EA YOUTH UNION</header>
+<header>EA YOUTH UNION</header>
 
 <div class="container">
     <div id="home" class="page active">
         <div class="card" style="background: var(--p); color: white; text-align: center;">
-            <h3 id="dailyVerse">"እግዚአብሔር እረኛዬ ነው"</h3>
-            <small id="verseRef" style="color:var(--s);">መዝሙር 23:1</small>
+            <h3 id="dailyVerse">...</h3>
+            <small id="verseRef" style="color:var(--s);"></small>
         </div>
         <div id="newsFeed"></div>
     </div>
 
     <div id="songs" class="page">
-        <input type="text" placeholder="መዝሙር ፈልግ..." onkeyup="searchSong(this.value)" style="margin-bottom: 10px;">
+        <button class="btn-action" style="background: #222; color: white;" onclick="downloadAllSongs()">
+            <i class="fas fa-cloud-download-alt"></i> ሁሉንም መዝሙሮች ለኦፍላይን አውርድ
+        </button>
+        <input type="text" placeholder="መዝሙር ፈልግ..." onkeyup="searchSong(this.value)" style="margin-top:15px;">
         <div id="songList"></div>
     </div>
 
     <div id="thanks" class="page">
         <div id="galleryFeed"></div>
         <div class="card"><p id="thanksText" style="text-align: center;"></p></div>
-        <div style="text-align: center; margin-top: 40px; opacity: 0.1;"><i class="fas fa-key" onclick="adminClick()"></i></div>
+        <div style="text-align: center; margin-top: 50px;">
+            <span onclick="adminClick()" style="color: #ddd; cursor: pointer; font-size: 10px;">⚫</span>
+        </div>
     </div>
 
     <div id="admin" class="page">
-        <div class="card" style="background: #222; color: white;"><h3>Admin Tunnel</h3></div>
+        <div class="card" style="background: #111; color: white;">
+            <h3>Admin Panel <span id="statDisplay" style="float:right; color:var(--s);">0</span></h3>
+        </div>
         <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
-            <button class="btn-action" onclick="showAdm('a1')">UI/Logo</button>
-            <button class="btn-action" onclick="showAdm('a2')">News/Verse</button>
-            <button class="btn-action" onclick="showAdm('a3')">Add Song</button>
-            <button class="btn-action" onclick="showAdm('a4')">Thanks Edit</button>
+            <button class="btn-action" onclick="showAdm('a-ui')">UI/Logo</button>
+            <button class="btn-action" onclick="showAdm('a-news')">News/Verse</button>
+            <button class="btn-action" onclick="showAdm('a-song')">Add Song</button>
+            <button class="btn-action" onclick="showAdm('a-stat')">Stat Edit</button>
         </div>
 
-        <div id="a1" class="admin-sec"><input id="iL" placeholder="Logo URL"><input type="color" id="iC"><button class="btn-action" onclick="saveUI()">Save</button></div>
-        <div id="a2" class="admin-sec"><input id="nT" placeholder="News Title"><textarea id="nD" placeholder="Details"></textarea><hr><input id="vT" placeholder="Verse"><button class="btn-action" onclick="saveNews()">Update</button></div>
-        <div id="a3" class="admin-sec"><input id="sN" type="number" placeholder="No"><input id="sT" placeholder="Title"><textarea id="sL" placeholder="Lyric"></textarea><input id="sA" placeholder="Audio Link"><button class="btn-action" onclick="saveSong()">Add</button></div>
-        <div id="a4" class="admin-sec"><input id="tI" placeholder="Image URL"><textarea id="tT" placeholder="Message"></textarea><button class="btn-action" onclick="saveThanks()">Update</button></div>
+        <div id="a-ui" class="admin-sec"><input id="iL" placeholder="Logo URL"><input type="color" id="iC"><button class="btn-action" onclick="saveUI()">Save UI</button></div>
+        <div id="a-news" class="admin-sec"><input id="nT" placeholder="News Title"><textarea id="nD" placeholder="Details"></textarea><input id="vT" placeholder="Daily Verse"><button class="btn-action" onclick="saveNews()">Post</button></div>
+        <div id="a-song" class="admin-sec"><input id="sN" type="number" placeholder="No"><input id="sT" placeholder="Title"><textarea id="sL" placeholder="Lyric"></textarea><input id="sA" placeholder="Audio URL"><button class="btn-action" onclick="saveSong()">Add Song</button></div>
+        <div id="a-stat" class="admin-sec"><h4>ተጠቃሚ ቁጥር ቀይር</h4><input id="sVal" type="number" placeholder="ቁጥር አስገባ"><button class="btn-action" onclick="saveStat()">Update Statistics</button></div>
     </div>
 
     <div id="viewer" class="page">
         <div class="card">
             <h2 id="vTi" style="text-align: center; color: var(--p);"></h2>
-            <audio id="mainAudio" controls style="width: 100%; display: none; margin: 15px 0;"></audio>
+            <audio id="mainAudio" controls style="width: 100%; margin: 15px 0;"></audio>
             <div id="vLy" style="white-space: pre-line; line-height: 2; font-size: var(--fSize);"></div>
             <button class="btn-action" onclick="showPage('songs')">ተመለስ</button>
         </div>
@@ -107,40 +108,78 @@
 
     window.onload = () => {
         setTimeout(() => document.getElementById('loader').style.display='none', 1000);
-        loadOfflineData();
-        loadFirebaseData();
+        loadInitialData();
     };
 
-    // Firebase ዳታ ሳይመጣ በፊት ኦፍላይን ዳታን መጫን
-    function loadOfflineData() {
+    function loadInitialData() {
+        // Load from LocalStorage first (Offline First)
         const cachedSongs = JSON.parse(localStorage.getItem('songs') || '[]');
         if(cachedSongs.length > 0) renderSongs(cachedSongs);
-    }
 
-    function loadFirebaseData() {
         db.ref('news').on('value', s => {
             let h = ""; s.forEach(c => h = `<div class="card"><h3>${c.val().title}</h3><p>${c.val().desc}</p></div>` + h);
             document.getElementById('newsFeed').innerHTML = h;
         });
+
         db.ref('songs').orderByChild('no').on('value', s => {
             let songs = []; s.forEach(c => songs.push(c.val()));
-            localStorage.setItem('songs', JSON.stringify(songs)); // Cache for offline
+            localStorage.setItem('songs', JSON.stringify(songs));
             renderSongs(songs);
         });
+
         db.ref('dailyVerse').on('value', s => { if(s.val()){ dailyVerse.innerText = s.val().text; verseRef.innerText = s.val().ref; } });
-        db.ref('thanksData').on('value', s => { if(s.val()){ galleryFeed.innerHTML = `<img src="${s.val().img}" style="width:100%; border-radius:15px;">`; thanksText.innerText = s.val().txt; } });
-        db.ref('appSettings').on('value', s => { if(s.val()){ if(s.val().color) document.documentElement.style.setProperty('--p', s.val().color); if(s.val().logo) splashLogo.src = s.val().logo; } });
+        db.ref('appSettings').on('value', s => { if(s.val()){ if(s.val().color) document.documentElement.style.setProperty('--p', s.val().color); } });
+        db.ref('stats').on('value', s => { if(s.val()) statDisplay.innerText = s.val().count; });
     }
 
     function renderSongs(songs) {
-        let h = ""; songs.forEach(s => h += `<div class="card" onclick="openSong('${s.title}',\`${s.lyric}\`,'${s.audio}')">${s.no}. ${s.title}</div>`);
+        let h = ""; songs.forEach(s => {
+            const isSaved = localStorage.getItem('audio_' + s.no) ? ' <i class="fas fa-check-circle" style="color:green"></i>' : '';
+            h += `<div class="card" onclick="openSong('${s.title}',\`${s.lyric}\`,'${s.audio}', ${s.no})">${s.no}. ${s.title}${isSaved}</div>`;
+        });
         document.getElementById('songList').innerHTML = h;
     }
 
-    function openSong(t, l, a) {
+    // መዝሙሮችን በአንድ ላይ ዳውንሎድ ማድረጊያ logic
+    async function downloadAllSongs() {
+        const songs = JSON.parse(localStorage.getItem('songs') || '[]');
+        if(songs.length === 0) return alert("መዝሙር አልተገኘም!");
+        if(!confirm("ሁሉንም መዝሙሮች ለኦፍላይን ማውረድ ትፈልጋለህ? (ይህ ዳታ ሊበላ ይችላል)")) return;
+
+        let downloaded = 0;
+        for (let s of songs) {
+            if (s.audio && !localStorage.getItem('audio_' + s.no)) {
+                try {
+                    const res = await fetch(s.audio);
+                    const blob = await res.blob();
+                    const reader = new FileReader();
+                    reader.onloadend = () => {
+                        localStorage.setItem('audio_' + s.no, reader.result);
+                        downloaded++;
+                        document.getElementById('dlProgress').style.width = (downloaded / songs.length * 100) + '%';
+                    };
+                    reader.readAsDataURL(blob);
+                } catch (e) { console.log("Error saving song " + s.no); }
+            }
+        }
+        alert("የሚወርዱ መዝሙሮች በሙሉ ተቀምጠዋል!");
+        renderSongs(songs);
+    }
+
+    function openSong(t, l, a, no) {
         vTi.innerText = t; vLy.innerText = l;
         const aud = document.getElementById('mainAudio');
-        if(a && confirm("መዝሙሩን ለማጫወት ኢንተርኔት ያስፈልጋል። ዳታ ይበራ?")) { aud.src = a; aud.style.display = 'block'; } else { aud.style.display = 'none'; }
+        const savedAudio = localStorage.getItem('audio_' + no);
+        
+        if(savedAudio) {
+            aud.src = savedAudio;
+            aud.style.display = 'block';
+        } else if(a) {
+            if(confirm("ይህ መዝሙር አልወረደም። በኢንተርኔት ይከፈት?")) {
+                aud.src = a;
+                aud.style.display = 'block';
+            }
+        } else { aud.style.display = 'none'; }
         showPage('viewer');
     }
 
@@ -148,22 +187,22 @@
         document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
         document.getElementById(id).classList.add('active');
         if(el) { document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active')); el.classList.add('active'); }
-        window.scrollTo(0,0);
     }
 
     function showAdm(id) { document.querySelectorAll('.admin-sec').forEach(s => s.style.display='none'); document.getElementById(id).style.display='block'; }
-    function saveUI() { db.ref('appSettings').update({logo:iL.value, color:iC.value}).then(()=>alert("Saved!")); }
-    function saveNews() { db.ref('news').push({title:nT.value, desc:nD.value}); db.ref('dailyVerse').set({text:vT.value}); alert("Updated!"); }
-    function saveSong() { db.ref('songs').push({no:parseInt(sN.value), title:sT.value, lyric:sL.value, audio:sA.value}).then(()=>alert("Added!")); }
-    function saveThanks() { db.ref('thanksData').set({img:tI.value, txt:tT.value}).then(()=>alert("Updated!")); }
+    function saveUI() { db.ref('appSettings').update({logo:iL.value, color:iC.value}); alert("Saved!"); }
+    function saveNews() { db.ref('news').push({title:nT.value, desc:nD.value}); db.ref('dailyVerse').set({text:vT.value}); alert("Post Done!"); }
+    function saveSong() { db.ref('songs').push({no:parseInt(sN.value), title:sT.value, lyric:sL.value, audio:sA.value}); alert("Song Added!"); }
+    function saveStat() { db.ref('stats').set({count: sVal.value}); alert("Stats Updated!"); }
 
-    let cl = 0; function adminClick() { cl++; if(cl === 3) { if(prompt("Admin Code:") === "ttse9@we33") showPage('admin'); cl = 0; } setTimeout(()=>cl=0, 3000); }
-
-    // Service Worker Logic for True Offline
-    if ('serviceWorker' in navigator) {
-        const sw = `const cacheName='eayu-v4'; self.addEventListener('install',e=>e.waitUntil(caches.open(cacheName).then(c=>c.addAll(['./','index.html'])))); self.addEventListener('fetch',e=>e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request))));`;
-        const blob = new Blob([sw], {type: 'application/javascript'});
-        navigator.serviceWorker.register(URL.createObjectURL(blob));
+    let cl = 0;
+    function adminClick() {
+        cl++;
+        if(cl === 3) {
+            if(prompt("የምስጢር ኮድ ያስገቡ:") === "ttse9@we33") showPage('admin');
+            cl = 0;
+        }
+        setTimeout(() => cl = 0, 3000);
     }
 </script>
 </body>

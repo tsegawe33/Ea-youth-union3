@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>EA Youth Union - Ultimate Offline</title>
+    <title>EA Youth Union - Ultimate Professional</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Ethiopic:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -11,117 +11,146 @@
         :root { --p: #0a4d1a; --s: #d4af37; --bg: #f8faf9; --fSize: 18px; --aniSpd: 2s; }
         body { margin: 0; background: var(--bg); font-family: 'Noto Serif Ethiopic', serif; overflow-x: hidden; }
         
-        /* Loading Overlay */
-        #loader { position: fixed; inset: 0; background: var(--p); z-index: 10000; display: flex; flex-direction: column; align-items: center; justify-content: center; color: white; transition: 0.5s; }
-        .logo-box { width: 110px; height: 110px; background: white; border-radius: 25px; border: 4px solid var(--s); animation: pulse var(--aniSpd) infinite ease-in-out; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+        /* Premium Loader */
+        #loader { position: fixed; inset: 0; background: var(--p); z-index: 10000; display: flex; flex-direction: column; align-items: center; justify-content: center; color: white; }
+        .logo-box { width: 110px; height: 110px; background: white; border-radius: 25px; border: 4px solid var(--s); animation: pulse var(--aniSpd) infinite ease; overflow: hidden; display: flex; align-items: center; justify-content: center; }
         .logo-box img { width: 100%; height: 100%; object-fit: cover; }
-        @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); box-shadow: 0 0 20px var(--s); } }
+        @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); box-shadow: 0 0 25px var(--s); } }
 
-        /* Permission Modal */
-        #permModal { position: fixed; top: 20%; left: 50%; transform: translateX(-50%); width: 85%; background: white; padding: 20px; border-radius: 20px; box-shadow: 0 20px 50px rgba(0,0,0,0.3); z-index: 3000; display: none; text-align: center; border: 2px solid var(--s); }
-
+        /* Ticker */
         .ticker-wrap { background: #b00020; color: white; padding: 10px 0; overflow: hidden; white-space: nowrap; font-weight: bold; border-bottom: 2px solid var(--s); }
         .ticker { display: inline-block; animation: ticker 25s linear infinite; }
-        @keyframes ticker { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
+        @keyframes ticker { 0% { transform: translateX(100vw); } 100% { transform: translateX(-100%); } }
 
-        header { background: var(--p); color: white; padding: 18px; text-align: center; border-bottom: 4px solid var(--s); position: sticky; top: 0; z-index: 1000; }
+        header { background: var(--p); color: white; padding: 18px; text-align: center; border-bottom: 4px solid var(--s); position: sticky; top: 0; z-index: 1000; font-weight: bold; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
         .container { max-width: 600px; margin: auto; padding: 12px; padding-bottom: 120px; }
         .page { display: none; }
-        .page.active { display: block; }
+        .page.active { display: block; animation: slideUp 0.3s ease-out; }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
-        .card { background: white; border-radius: 20px; padding: 18px; margin-bottom: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
-        .nav-bar { position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%); width: 92%; background: var(--p); border-radius: 40px; display: flex; justify-content: space-around; padding: 12px; border: 1px solid var(--s); z-index: 2000; }
+        .card { background: white; border-radius: 20px; padding: 18px; margin-bottom: 15px; box-shadow: 0 6px 20px rgba(0,0,0,0.05); transition: 0.3s; }
+        .nav-bar { position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%); width: 92%; background: var(--p); border-radius: 40px; display: flex; justify-content: space-around; padding: 12px; border: 1px solid var(--s); z-index: 2000; box-shadow: 0 10px 40px rgba(0,0,0,0.3); }
         .nav-item { color: rgba(255,255,255,0.4); text-align: center; flex: 1; cursor: pointer; }
         .nav-item.active { color: var(--s); }
         .nav-item i { font-size: 20px; }
-        .nav-item span { display: block; font-size: 10px; margin-top: 4px; }
+        .nav-item span { display: block; font-size: 10px; margin-top: 4px; font-weight: bold; }
 
-        .btn-action { background: var(--s); color: black; border: none; padding: 15px; width: 100%; border-radius: 12px; font-weight: bold; cursor: pointer; margin-top: 10px; display: flex; align-items: center; justify-content: center; gap: 8px; }
-        input, textarea { width: 100%; padding: 12px; margin: 8px 0; border-radius: 10px; border: 1px solid #ddd; box-sizing: border-box; font-family: inherit; }
+        .btn-action { background: var(--s); color: black; border: none; padding: 15px; width: 100%; border-radius: 12px; font-weight: 900; cursor: pointer; margin-top: 10px; display: flex; align-items: center; justify-content: center; gap: 8px; }
         .admin-sec { display: none; background: #fff; padding: 15px; border-radius: 15px; border: 2px dashed var(--s); margin-top: 10px; }
+        input, textarea { width: 100%; padding: 14px; margin: 8px 0; border-radius: 12px; border: 1px solid #ddd; box-sizing: border-box; font-family: inherit; font-size: 16px; }
         
-        #vLy { white-space: pre-line; line-height: 2; font-size: var(--fSize); touch-action: none; }
+        #vLy { white-space: pre-line; line-height: 2; font-size: var(--fSize); touch-action: none; transition: 0.1s; color: #222; }
+        #map { height: 350px; width: 100%; border-radius: 20px; display: none; }
+        .gallery { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
+        .gallery img { width: 100%; height: 110px; object-fit: cover; border-radius: 12px; border: 2px solid var(--s); }
+
+        /* Permission Modal */
+        #permModal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 5000; align-items: center; justify-content: center; padding: 20px; }
     </style>
 </head>
 <body>
 
-<div id="loader"><div class="logo-box"><img id="appLogo" src=""></div><h3 style="margin-top:20px;">EA YOUTH UNION</h3></div>
-
-<div id="permModal">
-    <i class="fas fa-map-marker-alt" style="font-size: 40px; color: var(--p);"></i>
-    <h3>የቦታ ፈቃድ (Location)</h3>
-    <p>አቅራቢያ ያሉ አብያተ ክርስቲያናትን ለማሳየት ፈቃድዎን ይስጡ።</p>
-    <button class="btn-action" onclick="requestLoc()">እሺ ፍቀድ</button>
+<div id="loader">
+    <div class="logo-box"><img id="appLogo" src=""></div>
+    <h3 style="margin-top:20px; letter-spacing: 2px;">EA YOUTH UNION</h3>
 </div>
 
-<div class="ticker-wrap"><div class="ticker" id="tickerMsg">...</div></div>
+<div id="permModal">
+    <div class="card" style="text-align: center;">
+        <i class="fas fa-map-marker-alt" style="font-size: 40px; color: var(--p);"></i>
+        <h3>ቦታዎን እንወቅ?</h3>
+        <p>አቅራቢያዎ ያሉ አብያተ ክርስቲያናትን ለማሳየት የቦታ (Location) ፈቃድ ያስፈልጋል።</p>
+        <button class="btn-action" onclick="requestLoc()">ፈቃድ ስጥ</button>
+        <button class="btn-action" style="background:#eee;" onclick="permModal.style.display='none'">አልፈልግም</button>
+    </div>
+</div>
+
+<div class="ticker-wrap"><div class="ticker" id="tickerMsg">የመጨረሻው ማስተር አፕ ተዘጋጅቷል...</div></div>
 <header id="appHeader">EA YOUTH UNION</header>
 
 <div class="container">
     <div id="home" class="page active">
-        <div class="card" style="background: var(--p); color: white; text-align: center;">
-            <h3 id="dVerse">...</h3><small id="vRef" style="color:var(--s);"></small>
+        <div class="card" style="background: linear-gradient(135deg, var(--p), #052a0e); color: white; text-align: center; position: relative; overflow: hidden;">
+            <h3 id="dVerse">...</h3>
+            <small id="vRef" style="color:var(--s); font-weight: bold;"></small>
         </div>
         <div id="newsFeed"></div>
     </div>
 
     <div id="songs" class="page">
-        <input type="text" id="sSearch" placeholder="መዝሙር ፈልግ..." onkeyup="filterSongs(this.value)">
-        <div id="songList" style="margin-top:10px;"></div>
+        <div class="card">
+            <input type="text" id="sSearch" placeholder="መዝሙር ፈልግ..." onkeyup="filterSongs(this.value)">
+        </div>
+        <div id="songList"></div>
     </div>
 
     <div id="calendar" class="page">
-        <div class="card" style="background:var(--p); color:white; text-align:center;"><h2 id="ethDay"></h2><h4 id="ethDate"></h4></div>
+        <div class="card" style="background:var(--p); color:white; text-align:center;">
+            <h2 id="ethDay"></h2><h4 id="ethDate"></h4>
+        </div>
         <div class="card">
-            <input type="text" id="aptT" placeholder="ቀጠሮ ርዕስ"><input type="datetime-local" id="aptD">
+            <h4>ቀጠሮ መያዣ</h4>
+            <input id="aptT" placeholder="ርዕስ"><input type="datetime-local" id="aptD">
             <button class="btn-action" onclick="saveApt()">መዝግብ</button>
-            <div id="aptList" style="margin-top:10px;"></div>
+            <div id="aptList" style="margin-top:15px;"></div>
         </div>
     </div>
 
     <div id="map-page" class="page">
-        <div class="card"><div id="map" style="height:350px; border-radius:15px; background:#eee;"></div><button class="btn-action" onclick="askMap()">ካርታ ክፈት</button></div>
+        <div class="card" id="mapCard">
+            <div id="map"></div>
+            <button class="btn-action" id="mapBtn" onclick="checkMapPerm()">ካርታውን ክፈት</button>
+        </div>
     </div>
 
     <div id="thanks" class="page">
-        <div id="tGallery" style="display:grid; grid-template-columns:1fr 1fr; gap:10px;"></div>
-        <div class="card"><p id="tText" style="text-align:center;"></p></div>
-        <div style="text-align: center; margin-top: 50px;"><span onclick="adminCheck()" style="opacity: 0.05;">⚫</span></div>
+        <div class="gallery" id="tGallery"></div>
+        <div class="card"><p id="tText" style="text-align:center; line-height: 1.8;"></p></div>
+        <div style="text-align: center; margin-top: 40px;"><span onclick="adminCheck()" style="opacity: 0.05; cursor: pointer;">⚫</span></div>
     </div>
 
     <div id="viewer" class="page">
         <div class="card">
             <h2 id="viewTi" style="text-align:center; color:var(--p);"></h2>
-            <div id="audArea" style="display:none; margin-bottom:15px;"><audio id="player" controls style="width:100%;"></audio></div>
+            <div id="audArea" style="display:none; margin-bottom: 20px;">
+                <audio id="player" controls style="width:100%; border-radius: 30px;"></audio>
+            </div>
             <div id="vLy"></div>
             <button class="btn-action" onclick="stopPlayer(); showPage('songs')">ተመለስ</button>
         </div>
     </div>
 
     <div id="admin" class="page">
-        <div class="card" style="background:#111; color:white;"><h3>Admin Panel <span id="admSt" style="float:right; font-size:12px; color:var(--s);"></span></h3></div>
+        <div class="card" style="background:#111; color:white;">
+            <h3>Admin Master <span id="admSt" style="float:right; font-size:11px; color:var(--s);"></span></h3>
+        </div>
         <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
-            <button class="btn-action" onclick="showAdm('a-ui')">UI/Logo</button>
+            <button class="btn-action" onclick="showAdm('a-ui')">Logo/Ani</button>
             <button class="btn-action" onclick="showAdm('a-news')">ዜና/ጥቅስ</button>
             <button class="btn-action" onclick="showAdm('a-song')">መዝሙር Edit</button>
             <button class="btn-action" onclick="showAdm('a-stat')">ስታቲስቲክስ</button>
+            <button class="btn-action" onclick="showAdm('a-thanks')">Thanks Edit</button>
         </div>
         <div id="a-ui" class="admin-sec">
             <input id="inL" placeholder="Logo URL"><input id="inA" type="number" step="0.5" placeholder="Ani Speed">
             <button class="btn-action" onclick="db.ref('settings').update({logo:inL.value, ani:inA.value})">Update UI</button>
         </div>
         <div id="a-news" class="admin-sec">
-            <input id="inTk" placeholder="Ticker"><input id="inVT" placeholder="Verse Text"><input id="inVR" placeholder="Ref">
-            <button class="btn-action" onclick="saveNews()">Save News</button>
+            <input id="inTk" placeholder="Ticker Message"><input id="inVT" placeholder="Verse"><input id="inVR" placeholder="Ref">
+            <button class="btn-action" onclick="saveNews()">Save</button>
         </div>
         <div id="a-song" class="admin-sec">
-            <input id="sN" type="number" placeholder="No"><input id="sTi" placeholder="Title"><textarea id="sLy" placeholder="Lyric"></textarea><input id="sAu" placeholder="Audio URL">
-            <button class="btn-action" onclick="saveSong()">Save Song</button>
+            <input id="sN" type="number" placeholder="ቁጥር"><input id="sTi" placeholder="ርዕስ"><textarea id="sLyric" placeholder="ግጥም"></textarea><input id="sAu" placeholder="ኦዲዮ ሊንክ">
+            <button class="btn-action" onclick="saveSong()">መዝሙር አስቀምጥ</button>
             <button class="btn-action" style="background:red; color:white;" onclick="delSong()">Delete</button>
         </div>
         <div id="a-stat" class="admin-sec">
-            <input id="rN" placeholder="ሃይማኖት"><input id="rC" type="number"><input id="cN" placeholder="ከተማ"><input id="cC" type="number">
-            <button class="btn-action" onclick="saveStat()">Update Stats</button>
+            <input id="rN" placeholder="Relig"><input id="rC" type="number"><input id="cN" placeholder="City"><input id="cC" type="number">
+            <button class="btn-action" onclick="saveStat()">Update</button>
+        </div>
+        <div id="a-thanks" class="admin-sec">
+            <textarea id="thTxt" placeholder="ምስጋና"></textarea><input id="thImg" placeholder="የምስል ሊንኮች">
+            <button class="btn-action" onclick="saveThanks()">Save Thanks</button>
         </div>
     </div>
 </div>
@@ -129,83 +158,77 @@
 <nav class="nav-bar">
     <div class="nav-item active" onclick="showPage('home', this)"><i class="fas fa-home"></i><span>ቤት</span></div>
     <div class="nav-item" onclick="showPage('songs', this)"><i class="fas fa-music"></i><span>መዝሙር</span></div>
-    <div class="nav-item" onclick="showPage('calendar', this)"><i class="fas fa-calendar-alt"></i><span>ቀን</span></div>
+    <div class="nav-item" onclick="showPage('calendar', this)"><i class="fas fa-calendar-day"></i><span>ቀን</span></div>
     <div class="nav-item" onclick="showPage('map-page', this)"><i class="fas fa-map-marked-alt"></i><span>ካርታ</span></div>
     <div class="nav-item" onclick="showPage('thanks', this)"><i class="fas fa-heart"></i><span>ምስጋና</span></div>
 </nav>
 
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
 <script>
     const firebaseConfig = { databaseURL: "https://ea-youth-union-app-d1358-default-rtdb.firebaseio.com/" };
     let db;
-    try { firebase.initializeApp(firebaseConfig); db = firebase.database(); } catch(e) { console.log("Offline"); }
+    try { firebase.initializeApp(firebaseConfig); db = firebase.database(); } catch(e) {}
 
     if ('serviceWorker' in navigator) { navigator.serviceWorker.register('/sw.js'); }
 
     window.onload = () => {
         setTimeout(() => document.getElementById('loader').style.display='none', 2000);
-        updateDate(); 
-        
-        // 1. መጀመሪያ ስልክ ውስጥ የተቀመጠውን ዳታ አሳይ
-        const saved = localStorage.getItem('ea_master_cache');
-        if(saved) renderData(JSON.parse(saved));
-        
-        // 2. ኢንተርኔት ካለ አዲስ ዳታ አምጣና ስልኩ ውስጥ ቀይረው
+        updateDate();
+        syncData(); // 100% Offline Loader
+        setupZoom();
+    };
+
+    function syncData() {
+        // መጀመሪያ ስልክ ላይ ያለውን (Offline) አሳይ
+        const local = localStorage.getItem('master_cache');
+        if(local) render(JSON.parse(local));
+
+        // ኢንተርኔት ካለ አዲስ ነገር በስተጀርባ (Background) አምጣ
         if(db) {
             db.ref('/').on('value', s => {
                 const val = s.val();
                 if(val) {
-                    localStorage.setItem('ea_master_cache', JSON.stringify(val));
-                    renderData(val);
+                    localStorage.setItem('master_cache', JSON.stringify(val));
+                    render(val);
                 }
             });
         }
-        setupZoom();
-    };
+    }
 
-    function renderData(data) {
-        if(!data) return;
+    function render(data) {
         if(data.settings) {
-            appLogo.src = data.settings.logo;
+            appLogo.src = data.settings.logo || "";
             document.documentElement.style.setProperty('--aniSpd', (data.settings.ani || 2) + 's');
         }
         if(data.ticker) tickerMsg.innerText = data.ticker;
         if(data.verse) { dVerse.innerText = data.verse.t; vRef.innerText = data.verse.r; }
         if(data.songs) {
             let h = "";
-            Object.values(data.songs).forEach(s => {
-                h += `<div class="card" onclick="openSong('${s.ti}',\`${s.ly}\`,'${s.aud || ""}')">${s.no}. ${s.ti}</div>`;
+            Object.values(data.songs).sort((a,b)=>a.no-b.no).forEach(s => {
+                h += `<div class="card" onclick="openSong('${s.ti}',\`${s.ly}\`,'${s.aud || ""}')">
+                    <i class="fas ${s.aud ? 'fa-play-circle' : 'fa-list'}" style="color:var(--p); margin-right:10px;"></i>
+                    <b>${s.no}. ${s.ti}</b>
+                </div>`;
             });
             songList.innerHTML = h;
         }
-        if(data.stats) admSt.innerText = `${data.stats.rN}:${data.stats.rC} | ${data.stats.cN}:${data.stats.cC}`;
         if(data.thanks) {
             tText.innerText = data.thanks.txt;
-            tGallery.innerHTML = data.thanks.imgs.split(',').map(i => `<img src="${i.trim()}" style="width:100%; border-radius:12px; height:110px; object-fit:cover;">`).join('');
+            tGallery.innerHTML = data.thanks.imgs.split(',').map(i => `<img src="${i.trim()}">`).join('');
         }
-    }
-
-    // Permission Handler
-    function askMap() {
-        if (navigator.geolocation) {
-            permModal.style.display = 'block';
-        } else { alert("Location not supported"); }
-    }
-
-    function requestLoc() {
-        permModal.style.display = 'none';
-        navigator.geolocation.getCurrentPosition(pos => {
-            alert("ፈቃድ ተሰጥቷል። ካርታው በመጫን ላይ...");
-            // Map loading logic here
-        }, err => { alert("ፈቃድ አልተሰጠም።"); });
+        if(data.stats) admSt.innerText = `${data.stats.rN}:${data.stats.rC} | ${data.stats.cN}:${data.stats.cC}`;
     }
 
     function updateDate() {
         const now = new Date(); const days = ['እሁድ', 'ሰኞ', 'ማክሰኞ', 'ረቡዕ', 'ሐሙስ', 'አርብ', 'ቅዳሜ'];
         ethDay.innerText = days[now.getDay()]; ethDate.innerText = now.toLocaleDateString('am-ET');
-        if(now.getDay() === 6) document.documentElement.style.setProperty('--p', '#d4af37');
+        if(now.getDay() === 6) {
+            document.documentElement.style.setProperty('--p', '#d4af37');
+            appHeader.innerText = "መልካም ሰንበት!";
+        }
     }
 
     function openSong(t, l, a) {
@@ -229,11 +252,31 @@
         });
     }
 
-    // Admin Handlers
+    // In-App Permission & Map
+    function checkMapPerm() {
+        if(navigator.geolocation) {
+            permModal.style.display = 'flex';
+        } else { alert("Location not supported"); }
+    }
+
+    function requestLoc() {
+        permModal.style.display = 'none';
+        map.style.display = 'block'; mapBtn.style.display = 'none';
+        navigator.geolocation.getCurrentPosition(p => {
+            let m = L.map('map').setView([p.coords.latitude, p.coords.longitude], 14);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(m);
+            L.marker([p.coords.latitude, p.coords.longitude]).addTo(m).bindPopup("አንተ እዚህ ነህ").openPopup();
+            fetch(`https://nominatim.openstreetmap.org/search?format=json&q=Seventh+Day+Adventist+Church&lat=${p.coords.latitude}&lon=${p.coords.longitude}&limit=10`)
+            .then(r => r.json()).then(d => d.forEach(pl => L.marker([pl.lat, pl.lon]).addTo(m).bindPopup(pl.display_name)));
+        }, () => alert("ፈቃድ አልተሰጠም"));
+    }
+
+    // Admin Tools
     function saveNews() { db.ref('ticker').set(inTk.value); db.ref('verse').set({t:inVT.value, r:inVR.value}); }
-    function saveSong() { db.ref('songs/'+sN.value).set({no:sN.value, ti:sTi.value, ly:sLy.value, aud:sAu.value}); }
+    function saveSong() { db.ref('songs/'+sN.value).set({no:sN.value, ti:sTi.value, ly:sLyric.value, aud:sAu.value}); alert("Saved!"); }
     function delSong() { db.ref('songs/'+sN.value).remove(); }
     function saveStat() { db.ref('stats').set({rN:rN.value, rC:rC.value, cN:cN.value, cC:cC.value}); }
+    function saveThanks() { db.ref('thanks').set({txt:thTxt.value, imgs:thImg.value}); }
 
     function showPage(id, el) {
         document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>EA Youth Union - Elite Version</title>
+    <title>EA Youth Union - Ultimate Master</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Ethiopic:wght@400;700&display=swap" rel="stylesheet">
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
@@ -12,157 +12,140 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     
     <style>
-        :root { 
-            --p: #0a4d1a; 
-            --s: #d4af37; 
-            --bg: #f8faf9; 
-            --fSize: 18px; 
-            --aniDuration: 2s;
-        }
+        :root { --p: #0a4d1a; --s: #d4af37; --bg: #f4f7f6; --fSize: 18px; --aniSpd: 2s; }
         body { margin: 0; background: var(--bg); font-family: 'Noto Serif Ethiopic', serif; color: #333; transition: 0.3s; }
         
-        /* Premium Ticker */
-        .ticker-wrap { background: linear-gradient(90deg, #ff4b2b, #ff416c); color: white; padding: 8px 0; overflow: hidden; font-weight: bold; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        /* Premium Loader & Logo Animation */
+        #loader { position: fixed; inset: 0; background: var(--p); z-index: 10000; display: flex; flex-direction: column; align-items: center; justify-content: center; color: white; transition: 0.5s; }
+        .logo-box { width: 110px; height: 110px; background: white; border-radius: 25px; border: 4px solid var(--s); animation: pulse var(--aniSpd) infinite ease-in-out; overflow: hidden; display: flex; align-items: center; justify-content: center; }
+        .logo-box img { width: 100%; height: 100%; object-fit: cover; }
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); box-shadow: 0 0 20px var(--s); } 100% { transform: scale(1); } }
+
+        /* Urgent Ticker News */
+        .ticker-wrap { background: #b00020; color: white; padding: 8px 0; overflow: hidden; white-space: nowrap; font-weight: bold; font-size: 14px; border-bottom: 2px solid var(--s); }
         .ticker { display: inline-block; animation: ticker 25s linear infinite; padding-left: 100%; }
-        @keyframes ticker { 0% { transform: translate(0, 0); } 100% { transform: translate(-100%, 0); } }
+        @keyframes ticker { 0% { transform: translateX(0); } 100% { transform: translateX(-100%); } }
 
-        /* Animated Logo System */
-        .logo-box { text-align: center; padding: 20px; }
-        #appLogo { 
-            width: 100px; height: 100px; border-radius: 20%; 
-            border: 4px solid var(--s); box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-            animation: customAni var(--aniDuration) infinite ease-in-out;
-        }
-        @keyframes customAni { 0%, 100% { transform: scale(1) rotate(0deg); } 50% { transform: scale(1.1) rotate(5deg); } }
-
-        header { background: var(--p); color: white; padding: 18px; text-align: center; border-bottom: 4px solid var(--s); font-size: 20px; font-weight: 700; position: sticky; top: 0; z-index: 1000; }
-        .container { max-width: 600px; margin: auto; padding: 15px; padding-bottom: 120px; }
+        header { background: var(--p); color: white; padding: 18px; text-align: center; border-bottom: 4px solid var(--s); position: sticky; top: 0; z-index: 1000; font-weight: bold; }
+        .container { max-width: 600px; margin: auto; padding: 12px; padding-bottom: 120px; }
         .page { display: none; }
-        .page.active { display: block; animation: slideUp 0.4s ease-out; }
-        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .page.active { display: block; animation: fadeIn 0.4s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        .card { background: white; border-radius: 20px; padding: 20px; margin-bottom: 18px; box-shadow: 0 8px 25px rgba(0,0,0,0.06); border: 1px solid rgba(0,0,0,0.03); }
-        
-        /* Navigation */
+        .card { background: white; border-radius: 20px; padding: 18px; margin-bottom: 15px; box-shadow: 0 8px 25px rgba(0,0,0,0.06); border: 1px solid rgba(0,0,0,0.03); }
         .nav-bar { position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%); width: 92%; background: var(--p); border-radius: 40px; display: flex; justify-content: space-around; padding: 12px; border: 1px solid var(--s); z-index: 2000; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
-        .nav-item { color: rgba(255,255,255,0.4); text-align: center; flex:1; cursor: pointer; transition: 0.3s; }
+        .nav-item { color: rgba(255,255,255,0.4); text-align: center; cursor: pointer; flex: 1; transition: 0.3s; }
         .nav-item.active { color: var(--s); transform: translateY(-5px); }
         .nav-item i { font-size: 20px; }
-        .nav-item span { display: block; font-size: 10px; margin-top: 4px; font-weight: bold; }
+        .nav-item span { display: block; font-size: 10px; margin-top: 3px; font-weight: bold; }
 
-        .btn-action { background: var(--s); color: #000; border: none; padding: 15px; width: 100%; border-radius: 15px; font-weight: 900; cursor: pointer; margin-top: 10px; transition: 0.2s; display: flex; align-items: center; justify-content: center; gap: 10px; }
-        .btn-action:active { transform: scale(0.95); }
+        .btn-action { background: var(--s); color: black; border: none; padding: 14px; width: 100%; border-radius: 12px; font-weight: 900; cursor: pointer; margin-top: 10px; display: flex; align-items: center; justify-content: center; gap: 8px; transition: 0.2s; }
+        .btn-action:active { transform: scale(0.96); }
         
-        input, textarea, select { width: 100%; padding: 14px; margin: 10px 0; border-radius: 12px; border: 1px solid #ddd; font-family: inherit; font-size: 15px; }
-        .admin-sec { display: none; background: #fdfdfd; padding: 15px; border-radius: 15px; border: 2px dashed var(--p); margin-top: 10px; }
+        input, textarea { width: 100%; padding: 14px; margin: 10px 0; border-radius: 12px; border: 1px solid #ddd; background: #fff; font-family: inherit; font-size: 15px; box-sizing: border-box; }
+        .admin-sec { display: none; background: #fff; padding: 15px; border-radius: 15px; border: 2px dashed var(--s); margin-top: 10px; }
         
-        #map { height: 350px; width: 100%; border-radius: 20px; border: 2px solid var(--s); }
-        #vLy { white-space: pre-line; line-height: 2; transition: 0.2s; touch-action: none; font-weight: 500; }
+        #vLy { white-space: pre-line; line-height: 2; font-size: var(--fSize); touch-action: none; transition: 0.1s; }
+        #map { height: 350px; width: 100%; border-radius: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        .gallery { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
+        .gallery img { width: 100%; height: 120px; object-fit: cover; border-radius: 12px; border: 2px solid var(--s); }
     </style>
 </head>
-<body>
+<body id="mainBody">
 
-<div class="ticker-wrap"><div class="ticker" id="urgentNews">Loading important updates...</div></div>
+<div id="loader">
+    <div class="logo-box"><img id="appLogo" src=""></div>
+    <h3 style="margin-top:20px; letter-spacing: 1px;">EA YOUTH UNION</h3>
+</div>
 
+<div class="ticker-wrap"><div class="ticker" id="tickerMsg">የተመረጡ ጥቅሶች እና አስቸኳይ ማስታወቂያዎች እዚህ ይተላለፋሉ...</div></div>
 <header id="appHeader">EA YOUTH UNION</header>
 
 <div class="container">
     <div id="home" class="page active">
-        <div class="logo-box"><img id="appLogo" src="https://via.placeholder.com/100" alt="Logo"></div>
-        <div class="card" style="background: linear-gradient(135deg, var(--p), #063111); color: white; text-align: center; border:none;">
-            <h3 id="dailyVerse">...</h3>
-            <small id="verseRef" style="color:var(--s); font-weight:bold;"></small>
+        <div class="card" style="background: linear-gradient(135deg, var(--p), #052a0e); color: white; text-align: center;">
+            <h3 id="dVerse">...</h3>
+            <small id="vRef" style="color:var(--s); font-weight: bold;"></small>
         </div>
         <div id="newsFeed"></div>
     </div>
 
     <div id="songs" class="page">
-        <div class="card">
-            <input type="text" id="sSearch" placeholder="🔍 መዝሙር በቁጥር ወይም በTitle ፈልግ..." onkeyup="searchSong(this.value)">
-            <button class="btn-action" style="background:#222; color:white;" onclick="downloadAllAudio()">
-                <i class="fas fa-cloud-download-alt"></i> ሁሉንም መዝሙሮች ለኦፍላይን አውርድ
-            </button>
-        </div>
-        <div id="songList"></div>
+        <input type="text" id="sSearch" placeholder="መዝሙር በስም ወይም በቁጥር ፈልግ..." onkeyup="filterSongs(this.value)">
+        <div id="songList" style="margin-top:15px;"></div>
     </div>
 
     <div id="calendar" class="page">
-        <div class="card" style="text-align:center; background:var(--p); color:white;">
-            <h1 id="ethDay" style="margin:0;"></h1>
-            <p id="fullDate" style="opacity:0.8;"></p>
+        <div class="card" style="background:var(--p); color:white; text-align:center;">
+            <h2 id="ethDayName"></h2>
+            <h4 id="ethFullDate"></h4>
         </div>
         <div class="card">
-            <h4><i class="fas fa-bell"></i> የሰንበት መግቢያ ማስታወሻ</h4>
-            <input type="time" id="alarmTime">
-            <button class="btn-action">ደወል መዝግብ</button>
+            <h4>የቀን ቀጠሮ መያዣ</h4>
+            <input type="text" id="aptTitle" placeholder="የቀጠሮው ርዕስ">
+            <input type="datetime-local" id="aptTime">
+            <button class="btn-action" onclick="saveApt()">ቀጠሮ መዝግብ</button>
+            <div id="aptList" style="margin-top:15px;"></div>
         </div>
     </div>
 
     <div id="map-page" class="page">
         <div class="card">
             <div id="map"></div>
-            <button class="btn-action" onclick="findSDA()"><i class="fas fa-location-arrow"></i> አቅራቢያዬ ያሉትን ፈልግ</button>
+            <button class="btn-action" onclick="loadMap()">አቅራቢያ ያሉ አድቬንቲስት አብያተ ክርስቲያናት</button>
         </div>
     </div>
 
     <div id="thanks" class="page">
-        <div class="card" style="border-top: 5px solid var(--s); text-align:center;">
-            <h2 style="color:var(--p);">የምስጋና መርሃ-ግብር</h2>
-            <div id="photoGallery" class="gallery" style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin:15px 0;"></div>
-            <p id="thanksText" style="line-height:1.8; color:#555;"></p>
-        </div>
-        <div style="text-align: center; margin-top: 40px;">
-            <span onclick="adminClick()" style="opacity: 0.02; cursor: pointer;">⚫</span>
+        <div class="gallery" id="thanksGallery"></div>
+        <div class="card"><p id="thanksText" style="line-height:1.8; text-align:center;"></p></div>
+        <div style="text-align: center; margin-top: 40px;"><span onclick="adminCheck()" style="opacity: 0.02; cursor: pointer;">⚫</span></div>
+    </div>
+
+    <div id="viewer" class="page">
+        <div class="card">
+            <h2 id="viewTitle" style="text-align:center; color:var(--p);"></h2>
+            <div id="audioArea" style="margin-bottom:15px; display:none;">
+                <audio id="player" controls style="width:100%;"></audio>
+            </div>
+            <div id="vLy"></div>
+            <button class="btn-action" onclick="stopPlayer(); showPage('songs')">ተመለስ</button>
         </div>
     </div>
 
     <div id="admin" class="page">
-        <div class="card" style="background:#1a1a1a; color:white;">
-            <h3><i class="fas fa-user-shield"></i> Admin Panel</h3>
-            <div id="admStats" style="font-size:14px; color:var(--s); padding:10px; background:rgba(255,255,255,0.1); border-radius:10px;"></div>
+        <div class="card" style="background:#111; color:white;">
+            <h3>Admin Master <span id="adminStats" style="float:right; color:var(--s); font-size:11px;"></span></h3>
         </div>
-        
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
-            <button class="btn-action" onclick="showAdm('adm-ui')">UI/Logo Edit</button>
-            <button class="btn-action" onclick="showAdm('adm-song')">Song Edit</button>
-            <button class="btn-action" onclick="showAdm('adm-news')">News Edit</button>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+            <button class="btn-action" onclick="showAdm('adm-ui')">Logo/Ani</button>
+            <button class="btn-action" onclick="showAdm('adm-news')">ዜና/Ticker</button>
+            <button class="btn-action" onclick="showAdm('adm-song')">መዝሙር Edit</button>
+            <button class="btn-action" onclick="showAdm('adm-stat')">Stat Edit</button>
             <button class="btn-action" onclick="showAdm('adm-thanks')">Thanks Edit</button>
         </div>
 
         <div id="adm-ui" class="admin-sec">
-            <h4>የአፑ መልክ (UI)</h4>
-            <input id="logoUrl" placeholder="Logo Image URL">
-            <input id="primaryColor" type="color" title="Main Color">
-            <p>አኒሜሽን ፍጥነት (ሰከንድ)፦</p>
-            <input id="aniSpeed" type="range" min="0.5" max="5" step="0.5" value="2">
-            <button class="btn-action" onclick="saveUI()">አዘምን</button>
+            <input id="inLogo" placeholder="Logo URL"><input id="inAni" type="number" step="0.5" placeholder="Ani Speed (Sec)">
+            <button class="btn-action" onclick="saveUI()">Update UI</button>
         </div>
-
-        <div id="adm-song" class="admin-sec">
-            <input id="sN" type="number" placeholder="ቁጥር"><input id="sT" placeholder="ርዕስ"><textarea id="sL" placeholder="ግጥም"></textarea><input id="sA" placeholder="Audio URL">
-            <button class="btn-action" onclick="saveSong()">ሴቭ / አዘምን</button>
-            <button class="btn-action" style="background:#ff4b2b; color:white;" onclick="delSong()">ድለታ (Delete)</button>
-        </div>
-
         <div id="adm-news" class="admin-sec">
-            <input id="uText" placeholder="የሚንቀሳቀስ ማስታወቂያ (Ticker)">
-            <input id="vText" placeholder="የእለቱ ጥቅስ">
-            <button class="btn-action" onclick="saveNews()">አዘምን</button>
+            <input id="inTick" placeholder="Ticker Message"><input id="inVT" placeholder="Daily Verse"><input id="inVR" placeholder="Ref">
+            <button class="btn-action" onclick="saveNews()">Save</button>
         </div>
-
+        <div id="adm-song" class="admin-sec">
+            <input id="sNo" type="number" placeholder="No (ቁጥር)"><input id="sTi" placeholder="Title"><textarea id="sLy" rows="5" placeholder="Lyric"></textarea><input id="sAu" placeholder="Audio Link">
+            <button class="btn-action" onclick="saveSong()">Save/Update</button>
+            <button class="btn-action" style="background:red; color:white;" onclick="delSong()">Delete</button>
+        </div>
+        <div id="adm-stat" class="admin-sec">
+            <input id="rN" placeholder="ሃይማኖት"><input id="rC" type="number" placeholder="ብዛት">
+            <input id="cN" placeholder="ከተማ"><input id="cC" type="number" placeholder="ብዛት">
+            <button class="btn-action" onclick="saveStat()">Update Statistics</button>
+        </div>
         <div id="adm-thanks" class="admin-sec">
-            <textarea id="tText" placeholder="የምስጋና ጽሁፍ"></textarea>
-            <input id="tImgs" placeholder="የምስል ሊንኮች (በኮማ ይለዩ)">
-            <button class="btn-action" onclick="saveThanks()">አዘምን</button>
-        </div>
-    </div>
-
-    <div id="viewer" class="page">
-        <div class="card" style="min-height: 80vh;">
-            <h2 id="vTi" style="text-align:center; color:var(--p);"></h2>
-            <audio id="mainAudio" controls style="width:100%; margin:15px 0; border-radius:30px;"></audio>
-            <div id="vLy"></div>
-            <button class="btn-action" onclick="showPage('songs')" style="margin-top:30px;">ተመለስ</button>
+            <textarea id="thTxt" placeholder="ምስጋና ጽሁፍ"></textarea><input id="thImg" placeholder="Image URLs (comma separated)">
+            <button class="btn-action" onclick="saveThanks()">Update Thanks</button>
         </div>
     </div>
 </div>
@@ -180,80 +163,103 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
+    // 100% Offline Service Worker Registration
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => { navigator.serviceWorker.register('/sw.js'); });
+    }
+
     window.onload = () => {
-        const d = new Date();
-        const days = ['እሁድ', 'ሰኞ', 'ማክሰኞ', 'ረቡዕ', 'ሐሙስ', 'አርብ', 'ቅዳሜ'];
-        ethDay.innerText = days[d.getDay()];
-        fullDate.innerText = d.toLocaleDateString('en-GB');
-        if(d.getDay() === 6) document.documentElement.style.setProperty('--p', '#d4af37');
-        
-        loadData();
-        setupPinch();
+        setTimeout(() => document.getElementById('loader').style.display='none', 2000);
+        updateDateTime(); loadData(); setupZoom();
     };
 
+    function updateDateTime() {
+        const now = new Date();
+        const days = ['እሁድ', 'ሰኞ', 'ማክሰኞ', 'ረቡዕ', 'ሐሙስ', 'አርብ', 'ቅዳሜ'];
+        ethDayName.innerText = days[now.getDay()];
+        ethFullDate.innerText = now.toLocaleDateString('am-ET', { year:'numeric', month:'long', day:'numeric' });
+        if(now.getDay() === 6) { // Sabbath Mode
+            document.documentElement.style.setProperty('--p', '#d4af37');
+            document.body.style.backgroundColor = "#fffdf0";
+        }
+    }
+
     function loadData() {
-        db.ref('appSettings').on('value', s => {
+        db.ref('settings').on('value', s => {
             if(s.val()){
-                document.documentElement.style.setProperty('--p', s.val().color || '#0a4d1a');
-                document.documentElement.style.setProperty('--aniDuration', (s.val().aniSpeed || 2) + 's');
-                appLogo.src = s.val().logo || 'https://via.placeholder.com/100';
+                appLogo.src = s.val().logo;
+                document.documentElement.style.setProperty('--aniSpd', (s.val().ani || 2) + 's');
             }
         });
-        db.ref('urgent').on('value', s => urgentNews.innerText = s.val() || "EA Youth Union Welcome!");
-        db.ref('dailyVerse').on('value', s => dailyVerse.innerText = s.val() || "ጌታ ብርሃኔና መድኃኒቴ ነው፤ የሚያስፈራኝ ማን ነው?");
-        db.ref('songs').orderByChild('no').on('value', s => {
-            let h = ""; s.forEach(c => {
-                const d = c.val();
-                h += `<div class="card" onclick="openSong('${d.title}',\`${d.lyric}\`,'${d.audio}',${d.no})"><b>${d.no}. ${d.title}</b> <i class="fas fa-chevron-right" style="float:right; opacity:0.3;"></i></div>`;
+        db.ref('ticker').on('value', s => tickerMsg.innerText = s.val() || "EA Youth Union");
+        db.ref('verse').on('value', s => { if(s.val()){ dVerse.innerText = s.val().t; vRef.innerText = s.val().r; }});
+        db.ref('songs').on('value', s => {
+            let h = "";
+            s.forEach(c => {
+                const data = c.val();
+                h += `<div class="card" onclick="openSong('${data.ti}',\`${data.ly}\`,'${data.aud || ""}')">
+                    <b>${data.no}. ${data.ti}</b>
+                    <i class="fas ${data.aud ? 'fa-play-circle' : 'fa-align-left'}" style="float:right; color:var(--p);"></i>
+                </div>`;
             });
             songList.innerHTML = h;
         });
-        db.ref('thanksData').on('value', s => {
+        db.ref('stats').on('value', s => { if(s.val()) adminStats.innerText = `${s.val().rN}:${s.val().rC} | ${s.val().cN}:${s.val().cC}`; });
+        db.ref('thanks').on('value', s => {
             if(s.val()){
-                thanksText.innerText = s.val().text;
-                photoGallery.innerHTML = s.val().images.split(',').map(img => `<img src="${img.trim()}" style="width:100%; border-radius:12px; height:120px; object-fit:cover;">`).join('');
+                thanksText.innerText = s.val().txt;
+                thanksGallery.innerHTML = s.val().imgs.split(',').map(i => `<img src="${i.trim()}">`).join('');
             }
         });
     }
 
-    function setupPinch() {
-        let el = document.getElementById('vLy');
-        let scale = 18;
-        el.addEventListener('touchstart', e => { if(e.touches.length === 2) initialDist = Math.hypot(e.touches[0].pageX - e.touches[1].pageX, e.touches[0].pageY - e.touches[1].pageY); });
-        el.addEventListener('touchmove', e => {
-            if(e.touches.length === 2) {
-                let dist = Math.hypot(e.touches[0].pageX - e.touches[1].pageX, e.touches[0].pageY - e.touches[1].pageY);
-                scale = dist > initialDist ? Math.min(scale + 0.8, 50) : Math.max(scale - 0.8, 12);
-                el.style.fontSize = scale + 'px';
-            }
-        });
-    }
-
-    function openSong(t, l, a, n) {
-        vTi.innerText = t; vLy.innerText = l;
-        mainAudio.src = a || "";
+    function openSong(t, l, a) {
+        viewTitle.innerText = t; vLy.innerText = l;
+        if(a) { audioArea.style.display='block'; player.src=a; } else { audioArea.style.display='none'; }
         showPage('viewer');
     }
 
+    function stopPlayer() { player.pause(); player.src=""; }
+
+    function filterSongs(v) {
+        document.querySelectorAll('#songList .card').forEach(c => {
+            c.style.display = c.innerText.toLowerCase().includes(v.toLowerCase()) ? "block" : "none";
+        });
+    }
+
+    function setupZoom() {
+        let scale = 18; let initialD = 0;
+        vLy.addEventListener('touchstart', e => { if(e.touches.length === 2) initialD = Math.hypot(e.touches[0].pageX - e.touches[1].pageX); });
+        vLy.addEventListener('touchmove', e => {
+            if(e.touches.length === 2) {
+                let d = Math.hypot(e.touches[0].pageX - e.touches[1].pageX);
+                scale = d > initialD ? Math.min(scale + 0.5, 45) : Math.max(scale - 0.5, 12);
+                document.documentElement.style.setProperty('--fSize', scale + 'px');
+            }
+        });
+    }
+
+    function loadMap() {
+        let m = L.map('map').setView([9.0192, 38.7525], 13);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(m);
+        if(navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(p => {
+                const lat = p.coords.latitude, lon = p.coords.longitude;
+                m.setView([lat, lon], 14);
+                L.marker([lat, lon]).addTo(m).bindPopup("አንተ እዚህ ነህ").openPopup();
+                fetch(`https://nominatim.openstreetmap.org/search?format=json&q=Seventh+Day+Adventist+Church&lat=${lat}&lon=${lon}&limit=15`)
+                .then(r => r.json()).then(d => d.forEach(pl => L.marker([pl.lat, pl.lon]).addTo(m).bindPopup(pl.display_name)));
+            });
+        }
+    }
+
     // Admin Functions
-    function saveUI() {
-        db.ref('appSettings').update({ logo: logoUrl.value, color: primaryColor.value, aniSpeed: aniSpeed.value });
-        alert("Settings Updated!");
-    }
-    function saveSong() {
-        db.ref('songs/' + sN.value).set({ no: sN.value, title: sT.value, lyric: sL.value, audio: sA.value });
-        alert("Song Saved!");
-    }
-    function delSong() { if(confirm("Delete this song?")) db.ref('songs/' + sN.value).remove(); }
-    function saveNews() {
-        if(uText.value) db.ref('urgent').set(uText.value);
-        if(vText.value) db.ref('dailyVerse').set(vText.value);
-        alert("News Updated!");
-    }
-    function saveThanks() {
-        db.ref('thanksData').set({ text: tText.value, images: tImgs.value });
-        alert("Thanks Content Updated!");
-    }
+    function saveUI() { db.ref('settings').update({logo:inLogo.value, ani:inAni.value}); alert("Updated!"); }
+    function saveNews() { db.ref('ticker').set(inTick.value); db.ref('verse').set({t:inVT.value, r:inVR.value}); alert("Saved!"); }
+    function saveSong() { db.ref('songs/'+sNo.value).set({no:sNo.value, ti:sTi.value, ly:sLy.value, aud:sAu.value}); alert("Saved!"); }
+    function delSong() { if(confirm("Delete?")) db.ref('songs/'+sNo.value).remove(); }
+    function saveStat() { db.ref('stats').set({rN:rN.value, rC:rC.value, cN:cN.value, cC:cC.value}); alert("Stats Saved!"); }
+    function saveThanks() { db.ref('thanks').set({txt:thTxt.value, imgs:thImg.value}); alert("Updated!"); }
 
     function showPage(id, el) {
         document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
@@ -261,14 +267,7 @@
         if(el) { document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active')); el.classList.add('active'); }
     }
     function showAdm(id) { document.querySelectorAll('.admin-sec').forEach(s => s.style.display='none'); document.getElementById(id).style.display='block'; }
-    let cl = 0; function adminClick() { cl++; if(cl === 3) { if(prompt("Security Code:") === "ttse9@we33") showPage('admin'); cl = 0; } }
-    
-    function searchSong(val) {
-        let cards = songList.getElementsByClassName('card');
-        for (let i = 0; i < cards.length; i++) {
-            cards[i].style.display = cards[i].innerText.toLowerCase().includes(val.toLowerCase()) ? "block" : "none";
-        }
-    }
+    let cl = 0; function adminCheck() { cl++; if(cl === 3) { if(prompt("Code:") === "ttse9@we33") showPage('admin'); cl = 0; } }
 </script>
 </body>
 </html>

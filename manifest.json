@@ -1,17 +1,23 @@
 {
-  "name": "EA Youth Union",
   "short_name": "EA Youth",
-  "description": "የኢትዮጵያ ወጣት ህብረት መዝሙራት እና መረጃ መተግበሪያ",
-  "start_url": "index.html",
-  "display": "standalone",
-  "background_color": "#0a4d1a",
-  "theme_color": "#0a4d1a",
+  "name": "EA Youth Union Mobile App",
+  "description": "The Ultimate Pro App for EA Youth Union Members",
   "icons": [
     {
       "src": "icon.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "icon.png",
       "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "any maskable"
+      "type": "image/png"
     }
-  ]
+  ],
+  "start_url": "./index.html",
+  "background_color": "#8b0000",
+  "display": "standalone",
+  "scope": "./",
+  "theme_color": "#8b0000",
+  "orientation": "portrait-primary"
 }

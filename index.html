@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>EA Youth Union - Ultimate Master</title>
+    <title>EA Youth Union - True Offline Edition</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Ethiopic:wght@400;700&display=swap" rel="stylesheet">
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
@@ -12,150 +12,127 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     
     <style>
-        :root { --p: #0a4d1a; --s: #d4af37; --bg: #f4f7f6; --fSize: 18px; --aniSpd: 2s; }
-        body { margin: 0; background: var(--bg); font-family: 'Noto Serif Ethiopic', serif; color: #333; transition: 0.3s; }
+        :root { --p: #0a4d1a; --s: #d4af37; --bg: #f8faf9; --fSize: 18px; --aniSpd: 2s; }
+        body { margin: 0; background: var(--bg); font-family: 'Noto Serif Ethiopic', serif; }
         
-        /* Premium Loader & Logo Animation */
-        #loader { position: fixed; inset: 0; background: var(--p); z-index: 10000; display: flex; flex-direction: column; align-items: center; justify-content: center; color: white; transition: 0.5s; }
-        .logo-box { width: 110px; height: 110px; background: white; border-radius: 25px; border: 4px solid var(--s); animation: pulse var(--aniSpd) infinite ease-in-out; overflow: hidden; display: flex; align-items: center; justify-content: center; }
+        #loader { position: fixed; inset: 0; background: var(--p); z-index: 10000; display: flex; flex-direction: column; align-items: center; justify-content: center; color: white; }
+        .logo-box { width: 110px; height: 110px; background: white; border-radius: 25px; border: 4px solid var(--s); animation: pulse var(--aniSpd) infinite ease-in-out; display: flex; align-items: center; justify-content: center; overflow: hidden; }
         .logo-box img { width: 100%; height: 100%; object-fit: cover; }
-        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); box-shadow: 0 0 20px var(--s); } 100% { transform: scale(1); } }
+        @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); box-shadow: 0 0 20px var(--s); } }
 
-        /* Urgent Ticker News */
-        .ticker-wrap { background: #b00020; color: white; padding: 8px 0; overflow: hidden; white-space: nowrap; font-weight: bold; font-size: 14px; border-bottom: 2px solid var(--s); }
-        .ticker { display: inline-block; animation: ticker 25s linear infinite; padding-left: 100%; }
-        @keyframes ticker { 0% { transform: translateX(0); } 100% { transform: translateX(-100%); } }
+        .ticker-wrap { background: #b00020; color: white; padding: 10px 0; overflow: hidden; white-space: nowrap; font-weight: bold; }
+        .ticker { display: inline-block; animation: ticker 25s linear infinite; }
+        @keyframes ticker { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
 
-        header { background: var(--p); color: white; padding: 18px; text-align: center; border-bottom: 4px solid var(--s); position: sticky; top: 0; z-index: 1000; font-weight: bold; }
+        header { background: var(--p); color: white; padding: 18px; text-align: center; border-bottom: 4px solid var(--s); font-weight: bold; position: sticky; top: 0; z-index: 1000; }
         .container { max-width: 600px; margin: auto; padding: 12px; padding-bottom: 120px; }
         .page { display: none; }
-        .page.active { display: block; animation: fadeIn 0.4s ease; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .page.active { display: block; animation: fadeIn 0.3s ease-in; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        .card { background: white; border-radius: 20px; padding: 18px; margin-bottom: 15px; box-shadow: 0 8px 25px rgba(0,0,0,0.06); border: 1px solid rgba(0,0,0,0.03); }
-        .nav-bar { position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%); width: 92%; background: var(--p); border-radius: 40px; display: flex; justify-content: space-around; padding: 12px; border: 1px solid var(--s); z-index: 2000; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
-        .nav-item { color: rgba(255,255,255,0.4); text-align: center; cursor: pointer; flex: 1; transition: 0.3s; }
-        .nav-item.active { color: var(--s); transform: translateY(-5px); }
+        .card { background: white; border-radius: 20px; padding: 18px; margin-bottom: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
+        .nav-bar { position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%); width: 92%; background: var(--p); border-radius: 40px; display: flex; justify-content: space-around; padding: 12px; border: 1px solid var(--s); z-index: 2000; }
+        .nav-item { color: rgba(255,255,255,0.4); text-align: center; flex: 1; cursor: pointer; }
+        .nav-item.active { color: var(--s); }
         .nav-item i { font-size: 20px; }
-        .nav-item span { display: block; font-size: 10px; margin-top: 3px; font-weight: bold; }
+        .nav-item span { display: block; font-size: 10px; margin-top: 3px; }
 
-        .btn-action { background: var(--s); color: black; border: none; padding: 14px; width: 100%; border-radius: 12px; font-weight: 900; cursor: pointer; margin-top: 10px; display: flex; align-items: center; justify-content: center; gap: 8px; transition: 0.2s; }
-        .btn-action:active { transform: scale(0.96); }
-        
-        input, textarea { width: 100%; padding: 14px; margin: 10px 0; border-radius: 12px; border: 1px solid #ddd; background: #fff; font-family: inherit; font-size: 15px; box-sizing: border-box; }
+        .btn-action { background: var(--s); color: black; border: none; padding: 14px; width: 100%; border-radius: 12px; font-weight: bold; cursor: pointer; margin-top: 10px; display: flex; align-items: center; justify-content: center; gap: 8px; }
         .admin-sec { display: none; background: #fff; padding: 15px; border-radius: 15px; border: 2px dashed var(--s); margin-top: 10px; }
+        input, textarea { width: 100%; padding: 12px; margin: 8px 0; border-radius: 10px; border: 1px solid #ddd; box-sizing: border-box; }
         
-        #vLy { white-space: pre-line; line-height: 2; font-size: var(--fSize); touch-action: none; transition: 0.1s; }
-        #map { height: 350px; width: 100%; border-radius: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
-        .gallery { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
-        .gallery img { width: 100%; height: 120px; object-fit: cover; border-radius: 12px; border: 2px solid var(--s); }
+        #vLy { white-space: pre-line; line-height: 2; font-size: var(--fSize); touch-action: none; }
+        #map { height: 350px; width: 100%; border-radius: 20px; }
     </style>
 </head>
-<body id="mainBody">
+<body>
 
 <div id="loader">
     <div class="logo-box"><img id="appLogo" src=""></div>
-    <h3 style="margin-top:20px; letter-spacing: 1px;">EA YOUTH UNION</h3>
+    <h3 style="margin-top:15px;">EA YOUTH UNION</h3>
 </div>
 
-<div class="ticker-wrap"><div class="ticker" id="tickerMsg">የተመረጡ ጥቅሶች እና አስቸኳይ ማስታወቂያዎች እዚህ ይተላለፋሉ...</div></div>
+<div class="ticker-wrap"><div class="ticker" id="tickerMsg">እንኳን ደህና መጡ!</div></div>
 <header id="appHeader">EA YOUTH UNION</header>
 
 <div class="container">
     <div id="home" class="page active">
-        <div class="card" style="background: linear-gradient(135deg, var(--p), #052a0e); color: white; text-align: center;">
+        <div class="card" style="background: var(--p); color: white; text-align: center;">
             <h3 id="dVerse">...</h3>
-            <small id="vRef" style="color:var(--s); font-weight: bold;"></small>
+            <small id="vRef" style="color:var(--s);"></small>
         </div>
         <div id="newsFeed"></div>
     </div>
 
     <div id="songs" class="page">
-        <input type="text" id="sSearch" placeholder="መዝሙር በስም ወይም በቁጥር ፈልግ..." onkeyup="filterSongs(this.value)">
-        <div id="songList" style="margin-top:15px;"></div>
+        <input type="text" id="sSearch" placeholder="መዝሙር ፈልግ..." onkeyup="filterSongs(this.value)">
+        <div id="songList" style="margin-top:10px;"></div>
     </div>
 
     <div id="calendar" class="page">
         <div class="card" style="background:var(--p); color:white; text-align:center;">
-            <h2 id="ethDayName"></h2>
-            <h4 id="ethFullDate"></h4>
+            <h2 id="ethDay"></h2><h4 id="ethDate"></h4>
         </div>
         <div class="card">
-            <h4>የቀን ቀጠሮ መያዣ</h4>
-            <input type="text" id="aptTitle" placeholder="የቀጠሮው ርዕስ">
-            <input type="datetime-local" id="aptTime">
-            <button class="btn-action" onclick="saveApt()">ቀጠሮ መዝግብ</button>
-            <div id="aptList" style="margin-top:15px;"></div>
+            <input type="text" id="aptT" placeholder="የቀጠሮ ርዕስ"><input type="datetime-local" id="aptD">
+            <button class="btn-action" onclick="saveApt()">መዝግብ</button>
+            <div id="aptList" style="margin-top:10px;"></div>
         </div>
     </div>
 
     <div id="map-page" class="page">
-        <div class="card">
-            <div id="map"></div>
-            <button class="btn-action" onclick="loadMap()">አቅራቢያ ያሉ አድቬንቲስት አብያተ ክርስቲያናት</button>
-        </div>
+        <div class="card"><div id="map"></div><button class="btn-action" onclick="loadMap()">ካርታውን አድስ</button></div>
     </div>
 
     <div id="thanks" class="page">
-        <div class="gallery" id="thanksGallery"></div>
-        <div class="card"><p id="thanksText" style="line-height:1.8; text-align:center;"></p></div>
-        <div style="text-align: center; margin-top: 40px;"><span onclick="adminCheck()" style="opacity: 0.02; cursor: pointer;">⚫</span></div>
+        <div id="tGallery" style="display:grid; grid-template-columns:1fr 1fr; gap:10px;"></div>
+        <div class="card"><p id="tText" style="text-align:center;"></p></div>
+        <div style="text-align: center; margin-top: 50px;"><span onclick="adminCheck()" style="opacity: 0.1;">⚫</span></div>
     </div>
 
     <div id="viewer" class="page">
         <div class="card">
-            <h2 id="viewTitle" style="text-align:center; color:var(--p);"></h2>
-            <div id="audioArea" style="margin-bottom:15px; display:none;">
-                <audio id="player" controls style="width:100%;"></audio>
-            </div>
+            <h2 id="viewTi" style="text-align:center; color:var(--p);"></h2>
+            <div id="audArea" style="display:none;"><audio id="player" controls style="width:100%;"></audio></div>
             <div id="vLy"></div>
             <button class="btn-action" onclick="stopPlayer(); showPage('songs')">ተመለስ</button>
         </div>
     </div>
 
     <div id="admin" class="page">
-        <div class="card" style="background:#111; color:white;">
-            <h3>Admin Master <span id="adminStats" style="float:right; color:var(--s); font-size:11px;"></span></h3>
-        </div>
+        <div class="card" style="background:#111; color:white;"><h3>Admin Panel <span id="admSt" style="float:right; font-size:12px; color:var(--s);"></span></h3></div>
         <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
-            <button class="btn-action" onclick="showAdm('adm-ui')">Logo/Ani</button>
-            <button class="btn-action" onclick="showAdm('adm-news')">ዜና/Ticker</button>
-            <button class="btn-action" onclick="showAdm('adm-song')">መዝሙር Edit</button>
-            <button class="btn-action" onclick="showAdm('adm-stat')">Stat Edit</button>
-            <button class="btn-action" onclick="showAdm('adm-thanks')">Thanks Edit</button>
+            <button class="btn-action" onclick="showAdm('a-ui')">UI/Logo</button>
+            <button class="btn-action" onclick="showAdm('a-news')">News/Verse</button>
+            <button class="btn-action" onclick="showAdm('a-song')">Song Edit</button>
+            <button class="btn-action" onclick="showAdm('a-stat')">Stats</button>
         </div>
-
-        <div id="adm-ui" class="admin-sec">
-            <input id="inLogo" placeholder="Logo URL"><input id="inAni" type="number" step="0.5" placeholder="Ani Speed (Sec)">
-            <button class="btn-action" onclick="saveUI()">Update UI</button>
+        <div id="a-ui" class="admin-sec">
+            <input id="inL" placeholder="Logo URL"><input id="inA" type="number" step="0.5" placeholder="Ani Speed">
+            <button class="btn-action" onclick="db.ref('settings').update({logo:inL.value, ani:inA.value})">Save</button>
         </div>
-        <div id="adm-news" class="admin-sec">
-            <input id="inTick" placeholder="Ticker Message"><input id="inVT" placeholder="Daily Verse"><input id="inVR" placeholder="Ref">
+        <div id="a-news" class="admin-sec">
+            <input id="inTk" placeholder="Ticker"><input id="inVT" placeholder="Verse"><input id="inVR" placeholder="Ref">
             <button class="btn-action" onclick="saveNews()">Save</button>
         </div>
-        <div id="adm-song" class="admin-sec">
-            <input id="sNo" type="number" placeholder="No (ቁጥር)"><input id="sTi" placeholder="Title"><textarea id="sLy" rows="5" placeholder="Lyric"></textarea><input id="sAu" placeholder="Audio Link">
-            <button class="btn-action" onclick="saveSong()">Save/Update</button>
+        <div id="a-song" class="admin-sec">
+            <input id="sN" type="number" placeholder="No"><input id="sTi" placeholder="Title"><textarea id="sLy" placeholder="Lyric"></textarea><input id="sAu" placeholder="Audio URL">
+            <button class="btn-action" onclick="saveSong()">Save</button>
             <button class="btn-action" style="background:red; color:white;" onclick="delSong()">Delete</button>
         </div>
-        <div id="adm-stat" class="admin-sec">
-            <input id="rN" placeholder="ሃይማኖት"><input id="rC" type="number" placeholder="ብዛት">
-            <input id="cN" placeholder="ከተማ"><input id="cC" type="number" placeholder="ብዛት">
-            <button class="btn-action" onclick="saveStat()">Update Statistics</button>
-        </div>
-        <div id="adm-thanks" class="admin-sec">
-            <textarea id="thTxt" placeholder="ምስጋና ጽሁፍ"></textarea><input id="thImg" placeholder="Image URLs (comma separated)">
-            <button class="btn-action" onclick="saveThanks()">Update Thanks</button>
+        <div id="a-stat" class="admin-sec">
+            <input id="rN" placeholder="Relig"><input id="rC" type="number"><input id="cN" placeholder="City"><input id="cC" type="number">
+            <button class="btn-action" onclick="saveStat()">Update</button>
         </div>
     </div>
 </div>
 
 <nav class="nav-bar">
-    <div class="nav-item active" onclick="showPage('home', this)"><i class="fas fa-home"></i><span>ቤት</span></div>
-    <div class="nav-item" onclick="showPage('songs', this)"><i class="fas fa-music"></i><span>መዝሙር</span></div>
-    <div class="nav-item" onclick="showPage('calendar', this)"><i class="fas fa-calendar-alt"></i><span>ቀን</span></div>
-    <div class="nav-item" onclick="showPage('map-page', this)"><i class="fas fa-map-marker-alt"></i><span>ካርታ</span></div>
-    <div class="nav-item" onclick="showPage('thanks', this)"><i class="fas fa-heart"></i><span>ምስጋና</span></div>
+    <div class="nav-item active" onclick="showPage('home', this)"><i class="fas fa-home"></i><span>Home</span></div>
+    <div class="nav-item" onclick="showPage('songs', this)"><i class="fas fa-music"></i><span>Songs</span></div>
+    <div class="nav-item" onclick="showPage('calendar', this)"><i class="fas fa-calendar-alt"></i><span>Date</span></div>
+    <div class="nav-item" onclick="showPage('map-page', this)"><i class="fas fa-map-marked-alt"></i><span>Map</span></div>
+    <div class="nav-item" onclick="showPage('thanks', this)"><i class="fas fa-heart"></i><span>Thanks</span></div>
 </nav>
 
 <script>
@@ -163,69 +140,62 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
-    // 100% Offline Service Worker Registration
-    if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => { navigator.serviceWorker.register('/sw.js'); });
-    }
+    if ('serviceWorker' in navigator) { navigator.serviceWorker.register('/sw.js'); }
 
     window.onload = () => {
         setTimeout(() => document.getElementById('loader').style.display='none', 2000);
-        updateDateTime(); loadData(); setupZoom();
+        updateDate(); 
+        // Sync Offline Data first
+        syncOffline();
+        loadLive(); 
+        setupZoom();
     };
 
-    function updateDateTime() {
-        const now = new Date();
-        const days = ['እሁድ', 'ሰኞ', 'ማክሰኞ', 'ረቡዕ', 'ሐሙስ', 'አርብ', 'ቅዳሜ'];
-        ethDayName.innerText = days[now.getDay()];
-        ethFullDate.innerText = now.toLocaleDateString('am-ET', { year:'numeric', month:'long', day:'numeric' });
-        if(now.getDay() === 6) { // Sabbath Mode
-            document.documentElement.style.setProperty('--p', '#d4af37');
-            document.body.style.backgroundColor = "#fffdf0";
-        }
+    function syncOffline() {
+        const cached = localStorage.getItem('app_cache');
+        if(cached) { renderData(JSON.parse(cached)); }
     }
 
-    function loadData() {
-        db.ref('settings').on('value', s => {
-            if(s.val()){
-                appLogo.src = s.val().logo;
-                document.documentElement.style.setProperty('--aniSpd', (s.val().ani || 2) + 's');
-            }
-        });
-        db.ref('ticker').on('value', s => tickerMsg.innerText = s.val() || "EA Youth Union");
-        db.ref('verse').on('value', s => { if(s.val()){ dVerse.innerText = s.val().t; vRef.innerText = s.val().r; }});
-        db.ref('songs').on('value', s => {
+    function renderData(data) {
+        if(!data) return;
+        if(data.settings) {
+            appLogo.src = data.settings.logo;
+            document.documentElement.style.setProperty('--aniSpd', (data.settings.ani || 2) + 's');
+        }
+        if(data.ticker) tickerMsg.innerText = data.ticker;
+        if(data.verse) { dVerse.innerText = data.verse.t; vRef.innerText = data.verse.r; }
+        if(data.songs) {
             let h = "";
-            s.forEach(c => {
-                const data = c.val();
-                h += `<div class="card" onclick="openSong('${data.ti}',\`${data.ly}\`,'${data.aud || ""}')">
-                    <b>${data.no}. ${data.ti}</b>
-                    <i class="fas ${data.aud ? 'fa-play-circle' : 'fa-align-left'}" style="float:right; color:var(--p);"></i>
-                </div>`;
+            Object.values(data.songs).forEach(s => {
+                h += `<div class="card" onclick="openSong('${s.ti}',\`${s.ly}\`,'${s.aud || ""}')">${s.no}. ${s.ti}</div>`;
             });
             songList.innerHTML = h;
+        }
+        if(data.stats) admSt.innerText = `${data.stats.rN}:${data.stats.rC} | ${data.stats.cN}:${data.stats.cC}`;
+    }
+
+    function loadLive() {
+        db.ref('/').on('value', s => {
+            const val = s.val();
+            localStorage.setItem('app_cache', JSON.stringify(val));
+            renderData(val);
         });
-        db.ref('stats').on('value', s => { if(s.val()) adminStats.innerText = `${s.val().rN}:${s.val().rC} | ${s.val().cN}:${s.val().cC}`; });
-        db.ref('thanks').on('value', s => {
-            if(s.val()){
-                thanksText.innerText = s.val().txt;
-                thanksGallery.innerHTML = s.val().imgs.split(',').map(i => `<img src="${i.trim()}">`).join('');
-            }
-        });
+    }
+
+    function updateDate() {
+        const now = new Date(); const days = ['እሁድ', 'ሰኞ', 'ማክሰኞ', 'ረቡዕ', 'ሐሙስ', 'አርብ', 'ቅዳሜ'];
+        ethDay.innerText = days[now.getDay()]; ethDate.innerText = now.toLocaleDateString('am-ET');
+        if(now.getDay() === 6) document.documentElement.style.setProperty('--p', '#d4af37');
     }
 
     function openSong(t, l, a) {
-        viewTitle.innerText = t; vLy.innerText = l;
-        if(a) { audioArea.style.display='block'; player.src=a; } else { audioArea.style.display='none'; }
+        viewTi.innerText = t; vLy.innerText = l;
+        if(a) { audArea.style.display='block'; player.src=a; } else { audArea.style.display='none'; }
         showPage('viewer');
     }
 
     function stopPlayer() { player.pause(); player.src=""; }
-
-    function filterSongs(v) {
-        document.querySelectorAll('#songList .card').forEach(c => {
-            c.style.display = c.innerText.toLowerCase().includes(v.toLowerCase()) ? "block" : "none";
-        });
-    }
+    function filterSongs(v) { document.querySelectorAll('#songList .card').forEach(c => c.style.display = c.innerText.toLowerCase().includes(v.toLowerCase()) ? "block" : "none"); }
 
     function setupZoom() {
         let scale = 18; let initialD = 0;
@@ -244,22 +214,16 @@
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(m);
         if(navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(p => {
-                const lat = p.coords.latitude, lon = p.coords.longitude;
-                m.setView([lat, lon], 14);
-                L.marker([lat, lon]).addTo(m).bindPopup("አንተ እዚህ ነህ").openPopup();
-                fetch(`https://nominatim.openstreetmap.org/search?format=json&q=Seventh+Day+Adventist+Church&lat=${lat}&lon=${lon}&limit=15`)
-                .then(r => r.json()).then(d => d.forEach(pl => L.marker([pl.lat, pl.lon]).addTo(m).bindPopup(pl.display_name)));
+                m.setView([p.coords.latitude, p.coords.longitude], 14);
+                L.marker([p.coords.latitude, p.coords.longitude]).addTo(m).bindPopup("አንተ እዚህ ነህ").openPopup();
             });
         }
     }
 
-    // Admin Functions
-    function saveUI() { db.ref('settings').update({logo:inLogo.value, ani:inAni.value}); alert("Updated!"); }
-    function saveNews() { db.ref('ticker').set(inTick.value); db.ref('verse').set({t:inVT.value, r:inVR.value}); alert("Saved!"); }
-    function saveSong() { db.ref('songs/'+sNo.value).set({no:sNo.value, ti:sTi.value, ly:sLy.value, aud:sAu.value}); alert("Saved!"); }
-    function delSong() { if(confirm("Delete?")) db.ref('songs/'+sNo.value).remove(); }
-    function saveStat() { db.ref('stats').set({rN:rN.value, rC:rC.value, cN:cN.value, cC:cC.value}); alert("Stats Saved!"); }
-    function saveThanks() { db.ref('thanks').set({txt:thTxt.value, imgs:thImg.value}); alert("Updated!"); }
+    function saveNews() { db.ref('ticker').set(inTk.value); db.ref('verse').set({t:inVT.value, r:inVR.value}); }
+    function saveSong() { db.ref('songs/'+sN.value).set({no:sN.value, ti:sTi.value, ly:sLy.value, aud:sAu.value}); }
+    function delSong() { db.ref('songs/'+sN.value).remove(); }
+    function saveStat() { db.ref('stats').set({rN:rN.value, rC:rC.value, cN:cN.value, cC:cC.value}); }
 
     function showPage(id, el) {
         document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));

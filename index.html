@@ -3,59 +3,64 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>EA Youth Union - Master</title>
+    <title>EA Youth Union - Ultimate Offline</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Ethiopic:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
         :root { --p: #0a4d1a; --s: #d4af37; --bg: #f8faf9; --fSize: 18px; --aniSpd: 2s; }
-        body { margin: 0; background: var(--bg); font-family: 'Noto Serif Ethiopic', serif; color: #333; -webkit-tap-highlight-color: transparent; }
+        body { margin: 0; background: var(--bg); font-family: 'Noto Serif Ethiopic', serif; overflow-x: hidden; }
         
-        /* Loader */
-        #loader { position: fixed; inset: 0; background: var(--p); z-index: 10000; display: flex; flex-direction: column; align-items: center; justify-content: center; color: white; }
-        .logo-box { width: 110px; height: 110px; background: white; border-radius: 25px; border: 4px solid var(--s); animation: pulse var(--aniSpd) infinite ease-in-out; overflow: hidden; display: flex; align-items: center; justify-content: center; }
+        /* Loading Overlay */
+        #loader { position: fixed; inset: 0; background: var(--p); z-index: 10000; display: flex; flex-direction: column; align-items: center; justify-content: center; color: white; transition: 0.5s; }
+        .logo-box { width: 110px; height: 110px; background: white; border-radius: 25px; border: 4px solid var(--s); animation: pulse var(--aniSpd) infinite ease-in-out; display: flex; align-items: center; justify-content: center; overflow: hidden; }
         .logo-box img { width: 100%; height: 100%; object-fit: cover; }
         @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); box-shadow: 0 0 20px var(--s); } }
 
-        /* Ticker */
-        .ticker-wrap { background: #b00020; color: white; padding: 10px 0; overflow: hidden; white-space: nowrap; font-weight: bold; border-bottom: 2px solid var(--s); }
-        .ticker { display: inline-block; animation: ticker 30s linear infinite; padding-left: 100%; }
-        @keyframes ticker { 0% { transform: translateX(0); } 100% { transform: translateX(-100%); } }
+        /* Permission Modal */
+        #permModal { position: fixed; top: 20%; left: 50%; transform: translateX(-50%); width: 85%; background: white; padding: 20px; border-radius: 20px; box-shadow: 0 20px 50px rgba(0,0,0,0.3); z-index: 3000; display: none; text-align: center; border: 2px solid var(--s); }
 
-        header { background: var(--p); color: white; padding: 18px; text-align: center; border-bottom: 4px solid var(--s); position: sticky; top: 0; z-index: 1000; font-weight: bold; font-size: 20px; }
+        .ticker-wrap { background: #b00020; color: white; padding: 10px 0; overflow: hidden; white-space: nowrap; font-weight: bold; border-bottom: 2px solid var(--s); }
+        .ticker { display: inline-block; animation: ticker 25s linear infinite; }
+        @keyframes ticker { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
+
+        header { background: var(--p); color: white; padding: 18px; text-align: center; border-bottom: 4px solid var(--s); position: sticky; top: 0; z-index: 1000; }
         .container { max-width: 600px; margin: auto; padding: 12px; padding-bottom: 120px; }
         .page { display: none; }
         .page.active { display: block; }
 
         .card { background: white; border-radius: 20px; padding: 18px; margin-bottom: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
-        .nav-bar { position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%); width: 92%; background: var(--p); border-radius: 40px; display: flex; justify-content: space-around; padding: 12px; border: 1px solid var(--s); z-index: 2000; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
-        .nav-item { color: rgba(255,255,255,0.4); text-align: center; flex: 1; cursor: pointer; transition: 0.3s; }
-        .nav-item.active { color: var(--s); transform: translateY(-3px); }
+        .nav-bar { position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%); width: 92%; background: var(--p); border-radius: 40px; display: flex; justify-content: space-around; padding: 12px; border: 1px solid var(--s); z-index: 2000; }
+        .nav-item { color: rgba(255,255,255,0.4); text-align: center; flex: 1; cursor: pointer; }
+        .nav-item.active { color: var(--s); }
         .nav-item i { font-size: 20px; }
         .nav-item span { display: block; font-size: 10px; margin-top: 4px; }
 
         .btn-action { background: var(--s); color: black; border: none; padding: 15px; width: 100%; border-radius: 12px; font-weight: bold; cursor: pointer; margin-top: 10px; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        input, textarea { width: 100%; padding: 12px; margin: 8px 0; border-radius: 10px; border: 1px solid #ddd; box-sizing: border-box; font-family: inherit; }
         .admin-sec { display: none; background: #fff; padding: 15px; border-radius: 15px; border: 2px dashed var(--s); margin-top: 10px; }
-        input, textarea { width: 100%; padding: 14px; margin: 8px 0; border-radius: 10px; border: 1px solid #ddd; box-sizing: border-box; font-family: inherit; }
         
-        #vLy { white-space: pre-line; line-height: 2; font-size: var(--fSize); touch-action: none; transition: 0.1s; }
+        #vLy { white-space: pre-line; line-height: 2; font-size: var(--fSize); touch-action: none; }
     </style>
 </head>
 <body>
 
-<div id="loader">
-    <div class="logo-box"><img id="appLogo" src=""></div>
-    <h3 style="margin-top:20px;">EA YOUTH UNION</h3>
+<div id="loader"><div class="logo-box"><img id="appLogo" src=""></div><h3 style="margin-top:20px;">EA YOUTH UNION</h3></div>
+
+<div id="permModal">
+    <i class="fas fa-map-marker-alt" style="font-size: 40px; color: var(--p);"></i>
+    <h3>የቦታ ፈቃድ (Location)</h3>
+    <p>አቅራቢያ ያሉ አብያተ ክርስቲያናትን ለማሳየት ፈቃድዎን ይስጡ።</p>
+    <button class="btn-action" onclick="requestLoc()">እሺ ፍቀድ</button>
 </div>
 
-<div class="ticker-wrap"><div class="ticker" id="tickerMsg">በመጫን ላይ...</div></div>
+<div class="ticker-wrap"><div class="ticker" id="tickerMsg">...</div></div>
 <header id="appHeader">EA YOUTH UNION</header>
 
 <div class="container">
     <div id="home" class="page active">
-        <div class="card" style="background: linear-gradient(135deg, var(--p), #05260d); color: white; text-align: center;">
-            <h3 id="dVerse">ጥቅስ በመጫን ላይ...</h3>
-            <small id="vRef" style="color:var(--s);"></small>
+        <div class="card" style="background: var(--p); color: white; text-align: center;">
+            <h3 id="dVerse">...</h3><small id="vRef" style="color:var(--s);"></small>
         </div>
         <div id="newsFeed"></div>
     </div>
@@ -66,19 +71,16 @@
     </div>
 
     <div id="calendar" class="page">
-        <div class="card" style="background:var(--p); color:white; text-align:center;">
-            <h2 id="ethDay"></h2><h4 id="ethDate"></h4>
-        </div>
+        <div class="card" style="background:var(--p); color:white; text-align:center;"><h2 id="ethDay"></h2><h4 id="ethDate"></h4></div>
         <div class="card">
-            <h4>ቀጠሮ መያዣ</h4>
-            <input type="text" id="aptT" placeholder="ርዕስ"><input type="datetime-local" id="aptD">
+            <input type="text" id="aptT" placeholder="ቀጠሮ ርዕስ"><input type="datetime-local" id="aptD">
             <button class="btn-action" onclick="saveApt()">መዝግብ</button>
             <div id="aptList" style="margin-top:10px;"></div>
         </div>
     </div>
 
     <div id="map-page" class="page">
-        <div class="card"><p style="text-align: center;">ካርታውን ለማየት ኢንተርኔት ያስፈልጋል።</p></div>
+        <div class="card"><div id="map" style="height:350px; border-radius:15px; background:#eee;"></div><button class="btn-action" onclick="askMap()">ካርታ ክፈት</button></div>
     </div>
 
     <div id="thanks" class="page">
@@ -90,7 +92,7 @@
     <div id="viewer" class="page">
         <div class="card">
             <h2 id="viewTi" style="text-align:center; color:var(--p);"></h2>
-            <div id="audArea" style="display:none; margin-bottom: 15px;"><audio id="player" controls style="width:100%;"></audio></div>
+            <div id="audArea" style="display:none; margin-bottom:15px;"><audio id="player" controls style="width:100%;"></audio></div>
             <div id="vLy"></div>
             <button class="btn-action" onclick="stopPlayer(); showPage('songs')">ተመለስ</button>
         </div>
@@ -106,15 +108,15 @@
         </div>
         <div id="a-ui" class="admin-sec">
             <input id="inL" placeholder="Logo URL"><input id="inA" type="number" step="0.5" placeholder="Ani Speed">
-            <button class="btn-action" onclick="updateUI()">Update UI</button>
+            <button class="btn-action" onclick="db.ref('settings').update({logo:inL.value, ani:inA.value})">Update UI</button>
         </div>
         <div id="a-news" class="admin-sec">
-            <input id="inTk" placeholder="Ticker"><input id="inVT" placeholder="Verse"><input id="inVR" placeholder="Ref">
+            <input id="inTk" placeholder="Ticker"><input id="inVT" placeholder="Verse Text"><input id="inVR" placeholder="Ref">
             <button class="btn-action" onclick="saveNews()">Save News</button>
         </div>
         <div id="a-song" class="admin-sec">
-            <input id="sN" type="number" placeholder="No"><input id="sTi" placeholder="Title"><textarea id="sLyric" placeholder="Lyric"></textarea><input id="sAu" placeholder="Audio URL">
-            <button class="btn-action" onclick="saveSong()">Save/Update</button>
+            <input id="sN" type="number" placeholder="No"><input id="sTi" placeholder="Title"><textarea id="sLy" placeholder="Lyric"></textarea><input id="sAu" placeholder="Audio URL">
+            <button class="btn-action" onclick="saveSong()">Save Song</button>
             <button class="btn-action" style="background:red; color:white;" onclick="delSong()">Delete</button>
         </div>
         <div id="a-stat" class="admin-sec">
@@ -128,6 +130,7 @@
     <div class="nav-item active" onclick="showPage('home', this)"><i class="fas fa-home"></i><span>ቤት</span></div>
     <div class="nav-item" onclick="showPage('songs', this)"><i class="fas fa-music"></i><span>መዝሙር</span></div>
     <div class="nav-item" onclick="showPage('calendar', this)"><i class="fas fa-calendar-alt"></i><span>ቀን</span></div>
+    <div class="nav-item" onclick="showPage('map-page', this)"><i class="fas fa-map-marked-alt"></i><span>ካርታ</span></div>
     <div class="nav-item" onclick="showPage('thanks', this)"><i class="fas fa-heart"></i><span>ምስጋና</span></div>
 </nav>
 
@@ -135,42 +138,37 @@
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 
 <script>
-    // Firebase Config
     const firebaseConfig = { databaseURL: "https://ea-youth-union-app-d1358-default-rtdb.firebaseio.com/" };
-    
     let db;
-    try {
-        firebase.initializeApp(firebaseConfig);
-        db = firebase.database();
-    } catch(e) {
-        console.log("Firebase Offline Mode");
-    }
+    try { firebase.initializeApp(firebaseConfig); db = firebase.database(); } catch(e) { console.log("Offline"); }
 
-    // Service Worker
     if ('serviceWorker' in navigator) { navigator.serviceWorker.register('/sw.js'); }
 
     window.onload = () => {
         setTimeout(() => document.getElementById('loader').style.display='none', 2000);
         updateDate(); 
         
-        // 1. መጀመሪያ ስልክህ ውስጥ ያለውን መረጃ አሳይ (Offline)
-        syncFromLocal();
+        // 1. መጀመሪያ ስልክ ውስጥ የተቀመጠውን ዳታ አሳይ
+        const saved = localStorage.getItem('ea_master_cache');
+        if(saved) renderData(JSON.parse(saved));
         
-        // 2. ከዚያ ኢንተርኔት ካለ አዲስ መረጃ አምጣ
-        if(db) { loadFromFirebase(); }
-        
+        // 2. ኢንተርኔት ካለ አዲስ ዳታ አምጣና ስልኩ ውስጥ ቀይረው
+        if(db) {
+            db.ref('/').on('value', s => {
+                const val = s.val();
+                if(val) {
+                    localStorage.setItem('ea_master_cache', JSON.stringify(val));
+                    renderData(val);
+                }
+            });
+        }
         setupZoom();
     };
 
-    function syncFromLocal() {
-        const cached = localStorage.getItem('ea_data');
-        if(cached) { renderUI(JSON.parse(cached)); }
-    }
-
-    function renderUI(data) {
+    function renderData(data) {
         if(!data) return;
         if(data.settings) {
-            appLogo.src = data.settings.logo || "";
+            appLogo.src = data.settings.logo;
             document.documentElement.style.setProperty('--aniSpd', (data.settings.ani || 2) + 's');
         }
         if(data.ticker) tickerMsg.innerText = data.ticker;
@@ -189,14 +187,19 @@
         }
     }
 
-    function loadFromFirebase() {
-        db.ref('/').on('value', s => {
-            const val = s.val();
-            if(val) {
-                localStorage.setItem('ea_data', JSON.stringify(val));
-                renderUI(val);
-            }
-        });
+    // Permission Handler
+    function askMap() {
+        if (navigator.geolocation) {
+            permModal.style.display = 'block';
+        } else { alert("Location not supported"); }
+    }
+
+    function requestLoc() {
+        permModal.style.display = 'none';
+        navigator.geolocation.getCurrentPosition(pos => {
+            alert("ፈቃድ ተሰጥቷል። ካርታው በመጫን ላይ...");
+            // Map loading logic here
+        }, err => { alert("ፈቃድ አልተሰጠም።"); });
     }
 
     function updateDate() {
@@ -226,10 +229,9 @@
         });
     }
 
-    // Admin
-    function updateUI() { db.ref('settings').update({logo:inL.value, ani:inA.value}); }
+    // Admin Handlers
     function saveNews() { db.ref('ticker').set(inTk.value); db.ref('verse').set({t:inVT.value, r:inVR.value}); }
-    function saveSong() { db.ref('songs/'+sN.value).set({no:sN.value, ti:sTi.value, ly:sLyric.value, aud:sAu.value}); }
+    function saveSong() { db.ref('songs/'+sN.value).set({no:sN.value, ti:sTi.value, ly:sLy.value, aud:sAu.value}); }
     function delSong() { db.ref('songs/'+sN.value).remove(); }
     function saveStat() { db.ref('stats').set({rN:rN.value, rC:rC.value, cN:cN.value, cC:cC.value}); }
 

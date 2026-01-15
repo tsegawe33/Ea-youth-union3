@@ -1,4 +1,4 @@
-const CACHE_NAME = 'ea-youth-ultimate-v9';
+const CACHE_NAME = 'ea-youth-ultimate-v10';
 const assets = [
   '/',
   '/index.html',

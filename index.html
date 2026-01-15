@@ -3,62 +3,58 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>EA Youth Union - True Offline Edition</title>
+    <title>EA Youth Union - Master</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Ethiopic:wght@400;700&display=swap" rel="stylesheet">
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     
     <style>
         :root { --p: #0a4d1a; --s: #d4af37; --bg: #f8faf9; --fSize: 18px; --aniSpd: 2s; }
-        body { margin: 0; background: var(--bg); font-family: 'Noto Serif Ethiopic', serif; }
+        body { margin: 0; background: var(--bg); font-family: 'Noto Serif Ethiopic', serif; color: #333; -webkit-tap-highlight-color: transparent; }
         
+        /* Loader */
         #loader { position: fixed; inset: 0; background: var(--p); z-index: 10000; display: flex; flex-direction: column; align-items: center; justify-content: center; color: white; }
-        .logo-box { width: 110px; height: 110px; background: white; border-radius: 25px; border: 4px solid var(--s); animation: pulse var(--aniSpd) infinite ease-in-out; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+        .logo-box { width: 110px; height: 110px; background: white; border-radius: 25px; border: 4px solid var(--s); animation: pulse var(--aniSpd) infinite ease-in-out; overflow: hidden; display: flex; align-items: center; justify-content: center; }
         .logo-box img { width: 100%; height: 100%; object-fit: cover; }
         @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); box-shadow: 0 0 20px var(--s); } }
 
-        .ticker-wrap { background: #b00020; color: white; padding: 10px 0; overflow: hidden; white-space: nowrap; font-weight: bold; }
-        .ticker { display: inline-block; animation: ticker 25s linear infinite; }
-        @keyframes ticker { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
+        /* Ticker */
+        .ticker-wrap { background: #b00020; color: white; padding: 10px 0; overflow: hidden; white-space: nowrap; font-weight: bold; border-bottom: 2px solid var(--s); }
+        .ticker { display: inline-block; animation: ticker 30s linear infinite; padding-left: 100%; }
+        @keyframes ticker { 0% { transform: translateX(0); } 100% { transform: translateX(-100%); } }
 
-        header { background: var(--p); color: white; padding: 18px; text-align: center; border-bottom: 4px solid var(--s); font-weight: bold; position: sticky; top: 0; z-index: 1000; }
+        header { background: var(--p); color: white; padding: 18px; text-align: center; border-bottom: 4px solid var(--s); position: sticky; top: 0; z-index: 1000; font-weight: bold; font-size: 20px; }
         .container { max-width: 600px; margin: auto; padding: 12px; padding-bottom: 120px; }
         .page { display: none; }
-        .page.active { display: block; animation: fadeIn 0.3s ease-in; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .page.active { display: block; }
 
-        .card { background: white; border-radius: 20px; padding: 18px; margin-bottom: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
-        .nav-bar { position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%); width: 92%; background: var(--p); border-radius: 40px; display: flex; justify-content: space-around; padding: 12px; border: 1px solid var(--s); z-index: 2000; }
-        .nav-item { color: rgba(255,255,255,0.4); text-align: center; flex: 1; cursor: pointer; }
-        .nav-item.active { color: var(--s); }
+        .card { background: white; border-radius: 20px; padding: 18px; margin-bottom: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        .nav-bar { position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%); width: 92%; background: var(--p); border-radius: 40px; display: flex; justify-content: space-around; padding: 12px; border: 1px solid var(--s); z-index: 2000; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
+        .nav-item { color: rgba(255,255,255,0.4); text-align: center; flex: 1; cursor: pointer; transition: 0.3s; }
+        .nav-item.active { color: var(--s); transform: translateY(-3px); }
         .nav-item i { font-size: 20px; }
-        .nav-item span { display: block; font-size: 10px; margin-top: 3px; }
+        .nav-item span { display: block; font-size: 10px; margin-top: 4px; }
 
-        .btn-action { background: var(--s); color: black; border: none; padding: 14px; width: 100%; border-radius: 12px; font-weight: bold; cursor: pointer; margin-top: 10px; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .btn-action { background: var(--s); color: black; border: none; padding: 15px; width: 100%; border-radius: 12px; font-weight: bold; cursor: pointer; margin-top: 10px; display: flex; align-items: center; justify-content: center; gap: 8px; }
         .admin-sec { display: none; background: #fff; padding: 15px; border-radius: 15px; border: 2px dashed var(--s); margin-top: 10px; }
-        input, textarea { width: 100%; padding: 12px; margin: 8px 0; border-radius: 10px; border: 1px solid #ddd; box-sizing: border-box; }
+        input, textarea { width: 100%; padding: 14px; margin: 8px 0; border-radius: 10px; border: 1px solid #ddd; box-sizing: border-box; font-family: inherit; }
         
-        #vLy { white-space: pre-line; line-height: 2; font-size: var(--fSize); touch-action: none; }
-        #map { height: 350px; width: 100%; border-radius: 20px; }
+        #vLy { white-space: pre-line; line-height: 2; font-size: var(--fSize); touch-action: none; transition: 0.1s; }
     </style>
 </head>
 <body>
 
 <div id="loader">
     <div class="logo-box"><img id="appLogo" src=""></div>
-    <h3 style="margin-top:15px;">EA YOUTH UNION</h3>
+    <h3 style="margin-top:20px;">EA YOUTH UNION</h3>
 </div>
 
-<div class="ticker-wrap"><div class="ticker" id="tickerMsg">እንኳን ደህና መጡ!</div></div>
+<div class="ticker-wrap"><div class="ticker" id="tickerMsg">በመጫን ላይ...</div></div>
 <header id="appHeader">EA YOUTH UNION</header>
 
 <div class="container">
     <div id="home" class="page active">
-        <div class="card" style="background: var(--p); color: white; text-align: center;">
-            <h3 id="dVerse">...</h3>
+        <div class="card" style="background: linear-gradient(135deg, var(--p), #05260d); color: white; text-align: center;">
+            <h3 id="dVerse">ጥቅስ በመጫን ላይ...</h3>
             <small id="vRef" style="color:var(--s);"></small>
         </div>
         <div id="newsFeed"></div>
@@ -74,26 +70,27 @@
             <h2 id="ethDay"></h2><h4 id="ethDate"></h4>
         </div>
         <div class="card">
-            <input type="text" id="aptT" placeholder="የቀጠሮ ርዕስ"><input type="datetime-local" id="aptD">
+            <h4>ቀጠሮ መያዣ</h4>
+            <input type="text" id="aptT" placeholder="ርዕስ"><input type="datetime-local" id="aptD">
             <button class="btn-action" onclick="saveApt()">መዝግብ</button>
             <div id="aptList" style="margin-top:10px;"></div>
         </div>
     </div>
 
     <div id="map-page" class="page">
-        <div class="card"><div id="map"></div><button class="btn-action" onclick="loadMap()">ካርታውን አድስ</button></div>
+        <div class="card"><p style="text-align: center;">ካርታውን ለማየት ኢንተርኔት ያስፈልጋል።</p></div>
     </div>
 
     <div id="thanks" class="page">
         <div id="tGallery" style="display:grid; grid-template-columns:1fr 1fr; gap:10px;"></div>
         <div class="card"><p id="tText" style="text-align:center;"></p></div>
-        <div style="text-align: center; margin-top: 50px;"><span onclick="adminCheck()" style="opacity: 0.1;">⚫</span></div>
+        <div style="text-align: center; margin-top: 50px;"><span onclick="adminCheck()" style="opacity: 0.05;">⚫</span></div>
     </div>
 
     <div id="viewer" class="page">
         <div class="card">
             <h2 id="viewTi" style="text-align:center; color:var(--p);"></h2>
-            <div id="audArea" style="display:none;"><audio id="player" controls style="width:100%;"></audio></div>
+            <div id="audArea" style="display:none; margin-bottom: 15px;"><audio id="player" controls style="width:100%;"></audio></div>
             <div id="vLy"></div>
             <button class="btn-action" onclick="stopPlayer(); showPage('songs')">ተመለስ</button>
         </div>
@@ -103,63 +100,77 @@
         <div class="card" style="background:#111; color:white;"><h3>Admin Panel <span id="admSt" style="float:right; font-size:12px; color:var(--s);"></span></h3></div>
         <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
             <button class="btn-action" onclick="showAdm('a-ui')">UI/Logo</button>
-            <button class="btn-action" onclick="showAdm('a-news')">News/Verse</button>
-            <button class="btn-action" onclick="showAdm('a-song')">Song Edit</button>
-            <button class="btn-action" onclick="showAdm('a-stat')">Stats</button>
+            <button class="btn-action" onclick="showAdm('a-news')">ዜና/ጥቅስ</button>
+            <button class="btn-action" onclick="showAdm('a-song')">መዝሙር Edit</button>
+            <button class="btn-action" onclick="showAdm('a-stat')">ስታቲስቲክስ</button>
         </div>
         <div id="a-ui" class="admin-sec">
             <input id="inL" placeholder="Logo URL"><input id="inA" type="number" step="0.5" placeholder="Ani Speed">
-            <button class="btn-action" onclick="db.ref('settings').update({logo:inL.value, ani:inA.value})">Save</button>
+            <button class="btn-action" onclick="updateUI()">Update UI</button>
         </div>
         <div id="a-news" class="admin-sec">
             <input id="inTk" placeholder="Ticker"><input id="inVT" placeholder="Verse"><input id="inVR" placeholder="Ref">
-            <button class="btn-action" onclick="saveNews()">Save</button>
+            <button class="btn-action" onclick="saveNews()">Save News</button>
         </div>
         <div id="a-song" class="admin-sec">
-            <input id="sN" type="number" placeholder="No"><input id="sTi" placeholder="Title"><textarea id="sLy" placeholder="Lyric"></textarea><input id="sAu" placeholder="Audio URL">
-            <button class="btn-action" onclick="saveSong()">Save</button>
+            <input id="sN" type="number" placeholder="No"><input id="sTi" placeholder="Title"><textarea id="sLyric" placeholder="Lyric"></textarea><input id="sAu" placeholder="Audio URL">
+            <button class="btn-action" onclick="saveSong()">Save/Update</button>
             <button class="btn-action" style="background:red; color:white;" onclick="delSong()">Delete</button>
         </div>
         <div id="a-stat" class="admin-sec">
-            <input id="rN" placeholder="Relig"><input id="rC" type="number"><input id="cN" placeholder="City"><input id="cC" type="number">
-            <button class="btn-action" onclick="saveStat()">Update</button>
+            <input id="rN" placeholder="ሃይማኖት"><input id="rC" type="number"><input id="cN" placeholder="ከተማ"><input id="cC" type="number">
+            <button class="btn-action" onclick="saveStat()">Update Stats</button>
         </div>
     </div>
 </div>
 
 <nav class="nav-bar">
-    <div class="nav-item active" onclick="showPage('home', this)"><i class="fas fa-home"></i><span>Home</span></div>
-    <div class="nav-item" onclick="showPage('songs', this)"><i class="fas fa-music"></i><span>Songs</span></div>
-    <div class="nav-item" onclick="showPage('calendar', this)"><i class="fas fa-calendar-alt"></i><span>Date</span></div>
-    <div class="nav-item" onclick="showPage('map-page', this)"><i class="fas fa-map-marked-alt"></i><span>Map</span></div>
-    <div class="nav-item" onclick="showPage('thanks', this)"><i class="fas fa-heart"></i><span>Thanks</span></div>
+    <div class="nav-item active" onclick="showPage('home', this)"><i class="fas fa-home"></i><span>ቤት</span></div>
+    <div class="nav-item" onclick="showPage('songs', this)"><i class="fas fa-music"></i><span>መዝሙር</span></div>
+    <div class="nav-item" onclick="showPage('calendar', this)"><i class="fas fa-calendar-alt"></i><span>ቀን</span></div>
+    <div class="nav-item" onclick="showPage('thanks', this)"><i class="fas fa-heart"></i><span>ምስጋና</span></div>
 </nav>
 
-<script>
-    const firebaseConfig = { databaseURL: "https://ea-youth-union-app-d1358-default-rtdb.firebaseio.com/" };
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.database();
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 
+<script>
+    // Firebase Config
+    const firebaseConfig = { databaseURL: "https://ea-youth-union-app-d1358-default-rtdb.firebaseio.com/" };
+    
+    let db;
+    try {
+        firebase.initializeApp(firebaseConfig);
+        db = firebase.database();
+    } catch(e) {
+        console.log("Firebase Offline Mode");
+    }
+
+    // Service Worker
     if ('serviceWorker' in navigator) { navigator.serviceWorker.register('/sw.js'); }
 
     window.onload = () => {
         setTimeout(() => document.getElementById('loader').style.display='none', 2000);
         updateDate(); 
-        // Sync Offline Data first
-        syncOffline();
-        loadLive(); 
+        
+        // 1. መጀመሪያ ስልክህ ውስጥ ያለውን መረጃ አሳይ (Offline)
+        syncFromLocal();
+        
+        // 2. ከዚያ ኢንተርኔት ካለ አዲስ መረጃ አምጣ
+        if(db) { loadFromFirebase(); }
+        
         setupZoom();
     };
 
-    function syncOffline() {
-        const cached = localStorage.getItem('app_cache');
-        if(cached) { renderData(JSON.parse(cached)); }
+    function syncFromLocal() {
+        const cached = localStorage.getItem('ea_data');
+        if(cached) { renderUI(JSON.parse(cached)); }
     }
 
-    function renderData(data) {
+    function renderUI(data) {
         if(!data) return;
         if(data.settings) {
-            appLogo.src = data.settings.logo;
+            appLogo.src = data.settings.logo || "";
             document.documentElement.style.setProperty('--aniSpd', (data.settings.ani || 2) + 's');
         }
         if(data.ticker) tickerMsg.innerText = data.ticker;
@@ -172,13 +183,19 @@
             songList.innerHTML = h;
         }
         if(data.stats) admSt.innerText = `${data.stats.rN}:${data.stats.rC} | ${data.stats.cN}:${data.stats.cC}`;
+        if(data.thanks) {
+            tText.innerText = data.thanks.txt;
+            tGallery.innerHTML = data.thanks.imgs.split(',').map(i => `<img src="${i.trim()}" style="width:100%; border-radius:12px; height:110px; object-fit:cover;">`).join('');
+        }
     }
 
-    function loadLive() {
+    function loadFromFirebase() {
         db.ref('/').on('value', s => {
             const val = s.val();
-            localStorage.setItem('app_cache', JSON.stringify(val));
-            renderData(val);
+            if(val) {
+                localStorage.setItem('ea_data', JSON.stringify(val));
+                renderUI(val);
+            }
         });
     }
 
@@ -209,19 +226,10 @@
         });
     }
 
-    function loadMap() {
-        let m = L.map('map').setView([9.0192, 38.7525], 13);
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(m);
-        if(navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(p => {
-                m.setView([p.coords.latitude, p.coords.longitude], 14);
-                L.marker([p.coords.latitude, p.coords.longitude]).addTo(m).bindPopup("አንተ እዚህ ነህ").openPopup();
-            });
-        }
-    }
-
+    // Admin
+    function updateUI() { db.ref('settings').update({logo:inL.value, ani:inA.value}); }
     function saveNews() { db.ref('ticker').set(inTk.value); db.ref('verse').set({t:inVT.value, r:inVR.value}); }
-    function saveSong() { db.ref('songs/'+sN.value).set({no:sN.value, ti:sTi.value, ly:sLy.value, aud:sAu.value}); }
+    function saveSong() { db.ref('songs/'+sN.value).set({no:sN.value, ti:sTi.value, ly:sLyric.value, aud:sAu.value}); }
     function delSong() { db.ref('songs/'+sN.value).remove(); }
     function saveStat() { db.ref('stats').set({rN:rN.value, rC:rC.value, cN:cN.value, cC:cC.value}); }
 

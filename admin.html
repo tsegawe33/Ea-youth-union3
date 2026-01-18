@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="am">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EA MASTER ADMIN - FULL CONTROL V2</title>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-database-compat.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root { 
+            --p: #0f172a; --s: #fbbf24; --acc: #ef4444; 
+            --grad: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            --glass: rgba(255, 255, 255, 0.05);
+        }
+        
+        body { margin: 0; font-family: 'Segoe UI', sans-serif; background: #0b0f19; color: white; display: flex; height: 100vh; overflow: hidden; }
+
+        /* Login Screen */
+        #login-gate { position: fixed; inset: 0; background: var(--grad); z-index: 10000; display: flex; align-items: center; justify-content: center; transition: 1s cubic-bezier(0.4, 0, 0.2, 1); }
+        .login-box { background: rgba(255,255,255,0.08); backdrop-filter: blur(20px); padding: 50px; border-radius: 40px; border: 1px solid rgba(255,255,255,0.1); text-align: center; width: 350px; box-shadow: 0 25px 50px rgba(0,0,0,0.5); }
+
+        /* Sidebar Navigation */
+        nav { width: 300px; background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(15px); height: 100vh; position: fixed; left: -300px; transition: 0.5s cubic-bezier(0.4, 0, 0.2, 1); z-index: 5000; border-right: 1px solid rgba(255,255,255,0.05); overflow-y: auto; scrollbar-width: none; }
+        nav.open { left: 0; }
+        .nav-head { padding: 40px 20px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .nav-btn { width: 88%; margin: 6px auto; padding: 14px 18px; border: none; background: none; color: #94a3b8; text-align: left; cursor: pointer; border-radius: 18px; display: flex; align-items: center; transition: 0.3s; font-size: 14.5px; }
+        .nav-btn i { width: 35px; font-size: 18px; color: var(--s); transition: 0.3s; }
+        .nav-btn:hover, .nav-btn.active { background: rgba(251, 191, 36, 0.15); color: white; transform: translateX(8px); }
+        .nav-btn.active i { transform: scale(1.2); color: white; }
+
+        /* Main Area */
+        main { flex: 1; padding: 30px; margin-left: 0; transition: 0.5s; overflow-y: auto; background: radial-gradient(circle at top right, #1e293b, #0b0f19); }
+        .top-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 30px; }
+        .card { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(10px); padding: 35px; border-radius: 35px; display: none; border: 1px solid rgba(255,255,255,0.05); animation: slideUp 0.5s ease; box-shadow: 0 20px 40px rgba(0,0,0,0.2); }
+        .card.active { display: block; }
+
+        h1 { font-size: 26px; margin-bottom: 20px; background: linear-gradient(to right, #fff, var(--s)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        input, textarea, select { width: 100%; padding: 15px; margin: 10px 0; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 15px; color: white; outline: none; transition: 0.3s; font-family: inherit; }
+        input:focus { border-color: var(--s); background: rgba(255,255,255,0.08); }
+
+        .btn-save { background: linear-gradient(135deg, #10b981, #059669); color: white; border: none; padding: 16px; border-radius: 18px; width: 100%; font-weight: bold; cursor: pointer; transition: 0.4s; margin-top: 10px; }
+        .btn-save:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(16,185,129,0.3); }
+        .btn-save:active { transform: scale(0.97); }
+
+        /* Toast Message */
+        #toast { position: fixed; top: 30px; left: 50%; transform: translateX(-50%); padding: 15px 40px; border-radius: 50px; font-weight: bold; z-index: 10001; display: none; animation: bounceIn 0.5s; box-shadow: 0 10px 30px rgba(0,0,0,0.5); text-align: center; }
+
+        @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes bounceIn { 0% { transform: translate(-50%, -100px); } 100% { transform: translate(-50%, 0); } }
+
+        @media (min-width: 1024px) { nav { left: 0; } main { margin-left: 300px; } .menu-toggle { display: none; } }
+    </style>
+</head>
+<body>
+
+<div id="login-gate">
+    <div class="login-box">
+        <i class="fas fa-user-shield" style="font-size: 50px; color: var(--s); margin-bottom: 20px;"></i>
+        <h2>ADMIN ACCESS</h2>
+        <input type="password" id="admin-pass" placeholder="Enter Master Key..." style="text-align:center;">
+        <button onclick="checkLogin()" class="btn-save" style="background:var(--s); color:var(--p);">UNLOCK SYSTEM</button>
+    </div>
+</div>
+
+<div id="toast"></div>
+
+<nav id="sidebar">
+    <div class="nav-head">
+        <h2 style="color:var(--s); margin:0; letter-spacing:2px;">EA MASTER</h2>
+        <small style="color:#64748b;">Control Panel V2.0</small>
+    </div>
+    <div style="padding: 10px;">
+        <button class="nav-btn active" onclick="go('dash', this)"><i class="fas fa-gauge-high"></i> Dashboard</button>
+        <button class="nav-btn" onclick="go('branding', this)"><i class="fas fa-palette"></i> Logo & Branding</button>
+        <button class="nav-btn" onclick="go('verse', this)"><i class="fas fa-bible"></i> Daily Verse</button>
+        <button class="nav-btn" onclick="go('live', this)"><i class="fas fa-tower-broadcast"></i> Live Streams</button>
+        <button class="nav-btn" onclick="go('media', this)"><i class="fas fa-compact-disc"></i> Media Manager</button>
+        <button class="nav-btn" onclick="go('lesson', this)"><i class="fas fa-book-open"></i> Weekly Lesson</button>
+        <button class="nav-btn" onclick="go('news', this)"><i class="fas fa-wind"></i> News Ticker</button>
+        <button class="nav-btn" onclick="go('sabbath', this)"><i class="fas fa-sun"></i> Sabbath Mode</button>
+        <button class="nav-btn" onclick="go('notif', this)"><i class="fas fa-paper-plane"></i> Notifications</button>
+        <button class="nav-btn" onclick="go('social', this)"><i class="fas fa-share-nodes"></i> Social Links</button>
+        <button class="nav-btn" onclick="go('ads', this)"><i class="fas fa-ad"></i> Info Cards</button>
+        <button class="nav-btn" onclick="go('users', this)"><i class="fas fa-users-gear"></i> Users Data</button>
+        <button class="nav-btn" onclick="go('db', this)"><i class="fas fa-database"></i> Database/Backup</button>
+        <button class="nav-btn" onclick="location.reload()" style="color:var(--acc); margin-top:20px;"><i class="fas fa-power-off"></i> Logout</button>
+    </div>
+</nav>
+
+<main>
+    <div class="top-bar">
+        <i class="fas fa-bars-staggered menu-toggle" onclick="toggleMenu()" style="font-size: 24px; color: var(--s); cursor: pointer;"></i>
+        <span id="header-title" style="font-weight: bold; color: var(--s);">DASHBOARD</span>
+    </div>
+
+    <div id="dash" class="card active">
+        <h1>Welcome, Admin</h1>
+        <p style="color:#94a3b8;">System Health: Optimal 🟢</p>
+        <div id="user-stats" style="background:var(--glass); padding:30px; border-radius:25px; text-align:center; margin-top:20px;">
+            <i class="fas fa-users" style="font-size:30px; color:var(--s);"></i>
+            <h3>ጠቅላላ ተጠቃሚዎች</h3>
+            <h1 id="count-display" style="font-size:50px; margin:10px 0;">0</h1>
+        </div>
+    </div>
+
+    <div id="branding" class="card">
+        <h1>Logo & Branding</h1>
+        <label>App Logo URL</label>
+        <input id="logo-url" placeholder="https://example.com/logo.png">
+        <label>App Title</label>
+        <input id="app-title-in" placeholder="EA YOUTH UNION">
+        <button class="btn-save" onclick="save('config/ui', {logo:val('logo-url'), title:val('app-title-in')})">ሁሉንም አድስ</button>
+    </div>
+
+    <div id="verse" class="card">
+        <h1>Daily Verse</h1>
+        <textarea id="v-text" rows="4" placeholder="የጥቅሱ ቃል..."></textarea>
+        <input id="v-ref" placeholder="ማጣቀሻ (ለምሳሌ፦ መዝሙር 23:1)">
+        <button class="btn-save" onclick="save('config/verse', {text:val('v-text'), ref:val('v-ref')})">ጥቅስ መዝግብ</button>
+    </div>
+
+    <div id="live" class="card">
+        <h1>Live Stream Control</h1>
+        <label>YouTube Embed Link</label>
+        <input id="yt-link" placeholder="YouTube Video ID or Embed Link">
+        <label>Telegram Live Stream Link</label>
+        <input id="tg-link" placeholder="Telegram Channel Stream Link">
+        <div style="display:flex; gap:10px;">
+            <button class="btn-save" onclick="save('config/live', {yt:val('yt-link'), tg:val('tg-link'), status:'on'})">ስርጭት ጀምር (ON)</button>
+            <button class="btn-save" style="background:var(--acc);" onclick="save('config/live', {status:'off'})">ሁሉንም አቁም (OFF)</button>
+        </div>
+    </div>
+
+    <div id="media" class="card">
+        <h1>Media Manager</h1>
+        <select id="m-type">
+            <option value="songs">መዝሙር (Lyrics & Audio)</option>
+            <option value="gallery">ፎቶ (Gallery)</option>
+            <option value="audio">ኦዲዮ (Sermons)</option>
+        </select>
+        <input id="m-title" placeholder="ርዕስ">
+        <textarea id="m-desc" rows="5" placeholder="ዝርዝር መግለጫ ወይም ግጥም..."></textarea>
+        <input id="m-url" placeholder="የፋይሉ ሊንክ (Image or MP3 URL)">
+        <button class="btn-save" onclick="pushData(val('m-type'), {title:val('m-title'), data:val('m-desc'), url:val('m-url'), time:Date.now()})">ፖስት አድርግ</button>
+    </div>
+
+    <div id="lesson" class="card">
+        <h1>Weekly Lesson</h1>
+        <input id="l-title" placeholder="የትምህርቱ ርዕስ">
+        <textarea id="l-body" rows="5" placeholder="የትምህርቱ ማጠቃለያ..."></textarea>
+        <input id="l-pdf" placeholder="የፒዲኤፍ (PDF) ሊንክ ካለ">
+        <button class="btn-save" onclick="save('config/lesson', {title:val('l-title'), body:val('l-body'), pdf:val('l-pdf')})">ትምህርት አድስ</button>
+    </div>
+
+    <div id="news" class="card">
+        <h1>News Ticker</h1>
+        <textarea id="n-text" placeholder="በአፑ ግርጌ የሚንሸራተት ዜና..."></textarea>
+        <button class="btn-save" onclick="save('config/news', {msg:val('n-text')})">ዜናውን ለውጥ</button>
+    </div>
+
+    <div id="sabbath" class="card">
+        <h1>Sabbath Mode Control</h1>
+        <p>ይህ ሲበራ አፑ ወደ አረንጓዴ/ወርቃማ ቀለም ይቀየራል።</p>
+        <button class="btn-save" style="background:#059669;" onclick="save('config/sabbath', 'on')">ACTIVATE SABBATH (ON)</button>
+        <button class="btn-save" style="background:#64748b; margin-top:10px;" onclick="save('config/sabbath', 'off')">DEACTIVATE (OFF)</button>
+    </div>
+
+    <div id="notif" class="card">
+        <h1>Push Notification</h1>
+        <input id="nt-title" placeholder="ርዕስ">
+        <textarea id="nt-msg" placeholder="መልዕክት..."></textarea>
+        <button class="btn-save" onclick="pushData('notifications', {title:val('nt-title'), msg:val('nt-msg'), date:Date.now()})">ማሳሰቢያ ላክ</button>
+    </div>
+
+    <div id="social" class="card">
+        <h1>Social Media Links</h1>
+        <input id="soc-tg" placeholder="Telegram Link">
+        <input id="soc-fb" placeholder="Facebook Link">
+        <input id="soc-yt" placeholder="YouTube Link">
+        <button class="btn-save" onclick="save('config/social', {tg:val('soc-tg'), fb:val('soc-fb'), yt:val('soc-yt')})">ሊንኮችን አድስ</button>
+    </div>
+
+    <div id="ads" class="card">
+        <h1>Info Cards & Ads</h1>
+        <input id="ad-img" placeholder="የምስል ሊንክ">
+        <input id="ad-link" placeholder="ሲነካ የሚከፍተው ሊንክ">
+        <button class="btn-save" onclick="save('config/ads', {img:val('ad-img'), link:val('ad-link')})">ካርድ አድስ</button>
+    </div>
+
+    <div id="users" class="card">
+        <h1>User Records</h1>
+        <div id="user-list-view" style="max-height: 400px; overflow-y: auto; background:var(--glass); border-radius:15px; padding:15px;">
+            Loading user database...
+        </div>
+    </div>
+
+    <div id="db" class="card">
+        <h1>Database & Security</h1>
+        <button class="btn-save" style="background:#334155;" onclick="notify('Backup logic started...', 'success')">Create Full Backup</button>
+        <button class="btn-save" style="background:var(--acc); margin-top:10px;" onclick="confirm('ሁሉንም Activity Logs ማጽዳት ይፈልጋሉ?') ? save('logs', null) : null">Clear All Logs</button>
+    </div>
+
+</main>
+
+<script>
+    const firebaseConfig = {
+        apiKey: "AIzaSyBN8hog89KDdG8OhP-DuikOtGTDMjRiTOA",
+        databaseURL: "https://ea-youth-union-2fbe8-default-rtdb.firebaseio.com",
+        projectId: "ea-youth-union-2fbe8",
+        storageBucket: "ea-youth-union-2fbe8.firebasestorage.app",
+        messagingSenderId: "1071585578309",
+        appId: "1:1071585578309:web:ad014bede46d6889bd822c"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    function checkLogin() {
+        if(document.getElementById('admin-pass').value === 'ttse9@we33') {
+            document.getElementById('login-gate').style.transform = 'translateY(-100%)';
+            setTimeout(() => document.getElementById('login-gate').style.display='none', 1000);
+        } else {
+            notify("Access Denied! ❌", "#ef4444");
+        }
+    }
+
+    function toggleMenu() { document.getElementById('sidebar').classList.toggle('open'); }
+    
+    function go(id, btn) {
+        document.querySelectorAll('.card').forEach(c => c.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+        document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById('header-title').innerText = btn.innerText.toUpperCase();
+        if(window.innerWidth < 1024) toggleMenu();
+    }
+
+    const val = id => document.getElementById(id).value;
+
+    function notify(msg, color) {
+        const t = document.getElementById('toast');
+        t.innerText = msg;
+        t.style.background = color === 'success' ? '#10b981' : color;
+        t.style.display = 'block';
+        setTimeout(() => t.style.display = 'none', 3000);
+    }
+
+    function save(path, data) {
+        db.ref(path).set(data)
+            .then(() => notify("በተሳካ ሁኔታ ተስተካክሏል ✅", "success"))
+            .catch(e => notify("ስህተት፡ " + e.message, "#ef4444"));
+    }
+
+    function pushData(path, data) {
+        if(!data.title) { notify("እባክዎ ርዕስ ያስገቡ!", "#ef4444"); return; }
+        db.ref(path).push(data)
+            .then(() => notify("መረጃው ተጨምሯል ✅", "success"))
+            .catch(e => notify("ስህተት፡ " + e.message, "#ef4444"));
+    }
+
+    // User Count Sync
+    db.ref('users').on('value', snap => {
+        const count = snap.numChildren();
+        document.getElementById('count-display').innerText = count;
+        
+        let html = "<h3>የተጠቃሚዎች ዝርዝር</h3>";
+        snap.forEach(user => {
+            html += `<div style="padding:10px; border-bottom:1px solid rgba(255,255,255,0.05)">
+                ${user.val().name || 'Anonymous User'} - ${user.val().device || 'Mobile'}
+            </div>`;
+        });
+        document.getElementById('user-list-view').innerHTML = html;
+    });
+</script>
+</body>
+</html>
